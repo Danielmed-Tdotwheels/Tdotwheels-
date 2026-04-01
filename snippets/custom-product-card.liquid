@@ -1,0 +1,446 @@
+{% comment %}
+- product: {Object} Product object
+{% endcomment %}
+
+{%- unless skip_styles -%}
+<style>
+  .card-shipping-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    pointer-events: auto; /* Enable hover */
+  }
+  .card-shipping-badge.usa {
+    background: rgba(232, 245, 233, 0.95);
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+  }
+  .card-shipping-badge.tomorrow {
+    background: #fff9c4;
+    color: #f57f17;
+    border: 1px solid #fff59d;
+  }
+  .card-shipping-badge.worldwide {
+    background: rgba(235, 245, 255, 0.95);
+    color: #0066cc;
+    border: 1px solid #cce5ff;
+    box-shadow: 0 0 12px 2px rgba(0, 102, 204, 0.4);
+    padding: 4px; /* Square for icon */
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: width 0.3s ease, padding 0.3s ease;
+    white-space: nowrap;
+    cursor: help;
+  }
+  .card-shipping-badge.worldwide:hover {
+    width: auto;
+    padding: 4px 10px;
+  }
+  .worldwide-text {
+    opacity: 0;
+    width: 0;
+    transition: opacity 0.2s ease, width 0.3s ease;
+    font-size: 10px;
+    margin-left: 0;
+  }
+  .card-shipping-badge.worldwide:hover .worldwide-text {
+    opacity: 1;
+    width: auto;
+    margin-left: 5px;
+  }
+</style>
+{%- endunless -%}
+
+{%- liquid
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+    assign save_amount = product.compare_at_price | minus: product.price
+  endif
+-%}
+
+<div class="custom-product-card">
+  {%- if on_sale -%}
+    <div class="custom-card-badge">Save {{ save_amount | money_without_trailing_zeros }}</div>
+  {%- endif -%}
+
+  {%- comment -%} Debug: Label is "{{ product.metafields.custom.shipping_label.value }}" {%- endcomment -%}
+  {%- liquid
+    assign shipping_label = product.metafields.custom.shipping_label.value | downcase | strip
+  -%}
+  {%- if shipping_label == 'get it tomorrow' -%}
+    <div class="card-shipping-badge tomorrow" title="Get it tomorrow">
+      <span>⚡ Get it tomorrow</span>
+    </div>
+  {%- elsif shipping_label == 'worldwide' -%}
+    <div class="card-shipping-badge worldwide" title="Worldwide Delivery">
+      <span>🌐</span>
+      <span class="worldwide-text">Worldwide Delivery</span>
+    </div>
+  {%- elsif shipping_label == 'usa' or product.tags contains 'ships-to-usa' -%}
+    <div class="card-shipping-badge usa">
+      <span>🇺🇸 Ships to USA & Canada</span>
+    </div>
+  {%- endif -%}
+
+  <a href="{{ product.url }}" class="custom-card-image-link">
+    <div class="custom-card-image-container">
+      {%- if product.featured_media -%}
+        <img
+          src="{{ product.featured_media | image_url: width: 440 }}"
+          alt="{{ product.featured_media.alt | escape }}"
+          width="220"
+          height="220"
+          loading="{% if lazy_load == false %}eager{% else %}lazy{% endif %}"
+          class="custom-card-img"
+        >
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'custom-card-img placeholder-svg' }}
+      {%- endif -%}
+    </div>
+  </a>
+
+  <div class="custom-card-info">
+    <h3 class="custom-card-title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    <div class="custom-card-properties">
+      {%- liquid
+        assign is_accessory = false
+        if product.type contains 'Accessory' or product.type contains 'Parts'
+          assign is_accessory = true
+        endif
+        for collection in product.collections
+          if collection.handle contains 'accessories'
+            assign is_accessory = true
+          endif
+        endfor
+      -%}
+
+      {%- if is_accessory -%}
+        Accessories and Spare Parts
+      {%- else -%}
+        {%- liquid
+          assign speed = product.metafields.specification.max_speed.value | default: product.metafields.custom.top_speed.value | default: '40km/hr'
+          assign range = product.metafields.specification.max_range.value | default: product.metafields.custom.range.value | default: '94km'
+          assign motor_power = product.metafields.custom.max_power.value | default: product.metafields.custom.rated_power.value | default: product.metafields.custom.motor_power.value | default: product.metafields.specification.power.value | default: '500W Motor'
+        -%}
+        {{ speed }} | {{ range }} | {{ motor_power }}
+      {%- endif -%}
+    </div>
+
+    <div class="custom-card-price-row">
+      <span class="custom-card-price{% if on_sale %} sale{% endif %}">{{ product.price | money }}</span>
+      {%- if on_sale -%}
+        <span class="custom-card-compare-price">{{ product.compare_at_price | money }}</span>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Judge.me Integration {%- endcomment -%}
+    <div class="custom-card-rating">
+      <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">
+        {{ product.metafields.judgeme.badge }}
+      </div>
+      {%- if product.metafields.judgeme.badge == blank -%}
+        <div class="custom-rating-placeholder">
+          <span class="stars">★★★★★</span>
+          <span class="count">(180)</span>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="custom-card-action">
+      <product-form>
+        {%- form 'product',
+          product,
+          id: product_form_id,
+          class: 'form',
+          novalidate: 'novalidate',
+          data-type: 'add-to-cart-form'
+        -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <button
+            type="submit"
+            name="add"
+            class="custom-add-to-cart-btn"
+            {% if product.selected_or_first_available_variant.available == false %}
+              disabled
+            {% endif %}
+          >
+            {%- if product.selected_or_first_available_variant.available -%}
+              Add to Cart
+            {%- else -%}
+              Sold Out
+            {%- endif -%}
+          </button>
+        {%- endform -%}
+      </product-form>
+    </div>
+  </div>
+</div>
+
+{%- unless skip_styles -%}
+<style>
+  .custom-product-card {
+    width: 100%;
+    max-width: 303px;
+    min-height: 470px;
+    height: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.02);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0;
+  }
+  @media screen and (max-width: 768px) {
+    .custom-product-card {
+      width: 100%;
+      max-width: 100%;
+      min-height: 310px;
+      height: auto;
+      padding: 12px 10px;
+      border-radius: 8px;
+      gap: 0;
+      justify-content: flex-start;
+      margin: 0;
+    }
+  }
+  @media screen and (max-width: 380px) {
+    .custom-product-card {
+      min-height: 290px;
+      padding: 10px 8px;
+    }
+  }
+  .custom-product-card:hover {
+    transform: translateY(-5px);
+  }
+  .custom-card-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #fff0ed;
+    color: #d72308;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 2;
+  }
+  @media screen and (max-width: 380px) {
+    .custom-card-badge {
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      padding: 2px 8px;
+    }
+  }
+  .custom-card-image-container {
+    width: 100%;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    background: #ffffff;
+    border-radius: 8px;
+  }
+  @media screen and (max-width: 768px) {
+    .custom-card-image-container {
+      height: 120px;
+      margin-bottom: 8px;
+    }
+  }
+  @media screen and (max-width: 380px) {
+    .custom-card-image-container {
+      height: 100px;
+      margin-bottom: 5px;
+    }
+  }
+  .custom-card-img {
+    max-width: 220px;
+    max-height: 220px;
+    object-fit: contain;
+  }
+  @media screen and (max-width: 768px) {
+    .custom-card-img {
+      max-width: 100%;
+      max-height: 110px;
+    }
+  }
+  @media screen and (max-width: 380px) {
+    .custom-card-img {
+      max-height: 90px;
+    }
+  }
+  .custom-card-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  .custom-card-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 8px 0;
+    height: 48px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  @media screen and (max-width: 768px) {
+    .custom-card-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      height: 36px;
+      margin-bottom: 4px;
+      line-height: 1.25;
+    }
+  }
+  @media screen and (max-width: 380px) {
+    .custom-card-title {
+      font-size: 13px;
+      height: 32px;
+    }
+  }
+  .custom-card-title a {
+    text-decoration: none;
+    color: #000;
+  }
+  .custom-card-properties {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .custom-card-price-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .custom-card-price {
+    font-size: 20px;
+    font-weight: 900;
+    color: #000;
+  }
+  .custom-card-price.sale {
+    color: #d72308;
+  }
+  .custom-card-compare-price {
+    font-size: 16px;
+    text-decoration: line-through;
+    color: #000;
+    font-weight: 400;
+  }
+  @media screen and (max-width: 768px) {
+    .custom-card-price {
+      font-size: 16px;
+    }
+    .custom-card-compare-price {
+      font-size: 13px;
+    }
+    .custom-card-price-row {
+      margin-bottom: 6px;
+      gap: 6px;
+    }
+    .custom-card-properties {
+      font-size: 10.5px;
+      margin-bottom: 6px;
+    }
+    .custom-card-rating {
+      margin-bottom: 8px;
+    }
+  }
+  @media screen and (max-width: 380px) {
+    .custom-card-price {
+      font-size: 15px;
+    }
+    .custom-card-properties {
+      font-size: 9.5px;
+    }
+  }
+  .custom-card-rating {
+    margin-bottom: 15px;
+  }
+  .custom-card-action {
+    margin-top: auto;
+  }
+  .custom-rating-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .custom-rating-placeholder .stars {
+    color: #d72308;
+    letter-spacing: 2px;
+  }
+  .custom-rating-placeholder .count {
+    font-size: 12px;
+    color: #aaa;
+  }
+  .custom-add-to-cart-btn {
+    width: 121px;
+    height: 47px;
+    background: #fff0ed;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 40px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #444;
+    transition: all 0.3s ease;
+  }
+  @media screen and (max-width: 768px) {
+    .custom-add-to-cart-btn {
+      width: 100%;
+      height: 34px;
+      font-size: 12px;
+      padding: 0;
+      margin-top: auto;
+    }
+    .custom-rating-placeholder .stars {
+      font-size: 10px;
+    }
+    .custom-rating-placeholder .count {
+      font-size: 9px;
+    }
+  }
+  @media screen and (max-width: 380px) {
+    .custom-add-to-cart-btn {
+      height: 30px;
+      font-size: 11px;
+    }
+  }
+  .custom-add-to-cart-btn:hover {
+    background: #d72308;
+    color: #ffffff;
+    border-color: #d72308;
+  }
+</style>
+{%- endunless -%}

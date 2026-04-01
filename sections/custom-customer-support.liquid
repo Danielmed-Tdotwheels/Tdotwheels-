@@ -1,0 +1,327 @@
+{% if page.handle == 'customer-support' %}
+  <style>
+    .customer-support-section {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 53px 79px;
+      background-color: #fff;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .support-hero-title {
+      font-family: 'Lato', sans-serif;
+      font-size: 88px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin: 0 0 20px 0;
+      color: #000;
+    }
+
+    .support-hero-subtitle {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 18px;
+      color: #6e6e73;
+      max-width: 600px;
+      margin-bottom: 60px;
+      line-height: 1.5;
+    }
+
+    .support-cards-grid {
+      display: flex;
+      gap: 30px;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: nowrap;
+    }
+
+    .support-card {
+      background: #f8f8f8;
+      flex: 1;
+      max-width: 633px;
+      height: 200px;
+      border-radius: 15px;
+      padding: 35px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      text-align: left;
+      box-sizing: border-box;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .support-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .support-card-title {
+      font-family: 'Lato', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      color: #000;
+      line-height: 1.2;
+    }
+
+    .support-card-body {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 16px;
+      color: #8e8e93;
+      margin: 0 0 30px 0;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    .support-button-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: auto;
+    }
+
+    .support-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #000;
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 40px;
+      text-decoration: none;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      transition: background 0.2s;
+      height: 48px;
+      box-sizing: border-box;
+      margin-top: auto;
+    }
+
+    .support-button.whatsapp {
+      background: #000;
+    }
+
+    .support-button.email-link {
+      background: transparent;
+      color: #000;
+      padding: 0;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      height: auto;
+    }
+
+    .support-button:hover {
+      opacity: 0.9;
+    }
+
+    .support-card-icon {
+      width: 24px;
+      height: 24px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .email-icon-circle {
+      width: 36px;
+      height: 36px;
+      background: #d72308;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    @media screen and (max-width: 1024px) {
+      .customer-support-section {
+        padding: 60px 40px;
+      }
+      .support-hero-title {
+        font-size: 64px;
+      }
+      .support-cards-grid {
+        gap: 20px;
+      }
+      .support-card {
+        padding: 30px;
+        height: auto;
+        min-height: 180px;
+      }
+      .support-card-title {
+        font-size: 24px;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .customer-support-section {
+        padding: 40px 20px;
+        text-align: center;
+      }
+      .support-hero-title {
+        font-size: 36px;
+        margin-bottom: 15px;
+      }
+      .support-hero-subtitle {
+        font-size: 15px;
+        margin-bottom: 40px;
+        padding: 0 10px;
+      }
+      .support-cards-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .support-card {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 160px;
+        padding: 25px;
+      }
+      .support-card-title {
+        font-size: 22px;
+      }
+      .support-card-body {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .support-button-wrapper {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <section class="customer-support-section">
+    <h1 class="support-hero-title">
+      {{ section.settings.heading }}
+    </h1>
+    <p class="support-hero-subtitle">
+      {{ section.settings.subheading }}
+    </p>
+
+    <div class="support-cards-grid">
+      <!-- WhatsApp Card -->
+      <div class="support-card">
+        <h2 class="support-card-title">{{ section.settings.whatsapp_title }}</h2>
+        <p class="support-card-body">{{ section.settings.whatsapp_text }}</p>
+        <a href="https://wa.me/{{ section.settings.whatsapp_number | remove: '-' | remove: ' ' | remove: '+' }}" target="_blank" class="support-button whatsapp">
+          {{ section.settings.whatsapp_button_label }}
+          <span class="support-card-icon">
+            <svg viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- Email Card -->
+      <div class="support-card">
+        <h2 class="support-card-title">{{ section.settings.email_title }}</h2>
+        <p class="support-card-body">{{ section.settings.email_text }}</p>
+        <div class="support-button-wrapper">
+          <div class="email-icon-circle">
+            <span class="support-card-icon" style="color: #fff;">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"/>
+                <path d="M22 6L12 13L2 6"/>
+              </svg>
+            </span>
+          </div>
+          <a href="mailto:{{ section.settings.email_address }}" class="support-button email-link"> {{ section.settings.email_button_label }} </a>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Customer Support Hero",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "24/7 Support For<br>Instant Help",
+      "info": "Use <br> for line breaks"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Experience seamless assistance that understands your needs and provides accurate solutions in seconds"
+    },
+    {
+      "type": "header",
+      "content": "WhatsApp Card"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_title",
+      "label": "WhatsApp Title",
+      "default": "Chat With Us Via WhatsApp"
+    },
+    {
+      "type": "textarea",
+      "id": "whatsapp_text",
+      "label": "WhatsApp Description",
+      "default": "You can chat with our team to get an update on your orders"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp Phone Number",
+      "default": "16138901759",
+      "info": "Include country code but omit +, -, or spaces."
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_button_label",
+      "label": "WhatsApp Button Label",
+      "default": "Chat on WhatsApp"
+    },
+    {
+      "type": "header",
+      "content": "Email Card"
+    },
+    {
+      "type": "text",
+      "id": "email_title",
+      "label": "Email Title",
+      "default": "Reach Out To Us"
+    },
+    {
+      "type": "textarea",
+      "id": "email_text",
+      "label": "Email Description",
+      "default": "We are always happy to hear from you."
+    },
+    {
+      "type": "text",
+      "id": "email_address",
+      "label": "Email Address",
+      "default": "contact@tdotwheels.com"
+    },
+    {
+      "type": "text",
+      "id": "email_button_label",
+      "label": "Email Button Label",
+      "default": "Send us a Email"
+    }
+  ]
+}
+{% endschema %}

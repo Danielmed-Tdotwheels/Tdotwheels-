@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <circle cx="25" cy="30" r="20" stroke="#000" stroke-width="8"/>
+  <path d="M25 15V45M15 30H35" stroke="#000" stroke-width="4"/>
+  <text x="60" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="900" fill="#000">CORE</text>
+</svg>

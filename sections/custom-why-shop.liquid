@@ -1,0 +1,372 @@
+{% comment %}
+  "Why Shop From Us?" Section for Tdot Wheels
+{% endcomment %}
+
+<div class="why-shop-section-breakout">
+  <div class="why-shop-section section-{{ section.id }}-padding" id="WhyShop-{{ section.id }}">
+    <div class="why-shop-container">
+      <div class="why-shop-image-wrapper">
+        {%- if section.settings.background_image != blank -%}
+          <img
+            src="{{ section.settings.background_image | image_url: width: 2000 }}"
+            alt="{{ section.settings.heading }}"
+            width="1440"
+            height="1200"
+            loading="lazy"
+            class="why-shop-scooter-img"
+          >
+        {%- else -%}
+          <img
+            src="{{ 'scooter-top-view.png' | asset_url }}"
+            alt="{{ section.settings.heading }}"
+            width="1440"
+            height="1200"
+            loading="lazy"
+            class="why-shop-scooter-img"
+          >
+        {%- endif -%}
+      </div>
+
+      <div class="why-shop-content-wrapper">
+        <h2 class="why-shop-main-title">{{ section.settings.heading }}</h2>
+
+        <div class="why-shop-features-grid">
+          {%- for block in section.blocks -%}
+            <div class="why-shop-feature-block" {{ block.shopify_attributes }}>
+              <div class="why-shop-icon">
+                {%- if block.settings.icon != blank -%}
+                  <img
+                    src="{{ block.settings.icon | image_url: width: 100 }}"
+                    alt="{{ block.settings.title }}"
+                    width="36"
+                    height="36"
+                    loading="lazy"
+                    class="feature-icon-img"
+                  >
+                {%- else -%}
+                  {%- liquid
+                    assign title_down = block.settings.title | downcase
+                  -%}
+                  {%- if title_down contains 'shipping' -%}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d72308" stroke-width="1.5">
+                      <path d="M1 3h15v13H1V3zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                  {%- elsif title_down contains 'dedicated' or title_down contains 'customer' -%}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d72308" stroke-width="1.5">
+                      <path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                    </svg>
+                  {%- else -%}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d72308" stroke-width="1.5">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
+                    </svg>
+                  {%- endif -%}
+                {%- endif -%}
+              </div>
+              <p class="why-shop-feature-title">{{ block.settings.title }}</p>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="why-shop-action">
+          <a href="{{ section.settings.button_link | default: '/collections/all' }}" class="why-shop-cta-btn">
+            {{ section.settings.button_text }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .why-shop-section-breakout {
+    background-color: {{ section.settings.background_color }};
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  .why-shop-section-breakout::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 2;
+    pointer-events: none;
+  }
+  .why-shop-section {
+    width: 100%;
+    min-height: 814px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 0 80px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .why-shop-container {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .why-shop-image-wrapper {
+    position: absolute;
+    top: -300px; /* Aligns scooter top view to overlap correctly */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1440px;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .why-shop-scooter-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    opacity: 0;
+    transform: translateY(100px) scale(0.9);
+    transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .why-shop-scooter-img.animate-in {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .why-shop-scooter-placeholder {
+    width: 100%;
+    height: 600px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+    font-size: 18px;
+    border: 1px dashed #333;
+    font-family: 'Lato', sans-serif;
+  }
+  .why-shop-content-wrapper {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+    padding: 200px 20px 0; /* Space for the scooter to bleed over */
+  }
+  .why-shop-main-title {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 64px;
+    font-weight: 500;
+    color: #ffffff;
+    margin: 0 0 45px 0;
+    letter-spacing: -0.01em;
+  }
+  .why-shop-features-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 70px;
+    margin-bottom: 55px;
+    flex-wrap: wrap;
+  }
+  .why-shop-feature-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .why-shop-icon {
+    width: 36px;
+    height: 36px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .why-shop-icon svg,
+  .why-shop-icon img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
+  .why-shop-feature-title {
+    font-family: 'Nunito Sans', sans-serif !important;
+    font-size: 18px;
+    color: #ffffff;
+    margin: 0;
+    font-weight: 400;
+  }
+  .why-shop-cta-btn {
+    display: inline-block;
+    background-color: #d72308;
+    color: #ffffff;
+    font-family: 'Work Sans', sans-serif !important;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .why-shop-cta-btn:hover {
+    background-color: #f12c0a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(215, 35, 8, 0.4);
+  }
+
+  @media screen and (max-width: 1440px) {
+    .why-shop-image-wrapper {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .why-shop-section {
+      min-height: auto;
+      padding-top: 150px;
+      padding-bottom: 60px;
+    }
+    .why-shop-image-wrapper {
+      width: 100%;
+      max-width: 600px;
+      top: -150px;
+    }
+    .why-shop-content-wrapper {
+      padding-top: 100px;
+    }
+    .why-shop-main-title {
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
+    .why-shop-features-grid {
+      flex-direction: column;
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+    .why-shop-icon {
+      width: 32px;
+      height: 32px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const section = document.querySelector('#WhyShop-{{ section.id }}');
+    const scooterImg = section.querySelector('.why-shop-scooter-img');
+
+    if (!scooterImg) return;
+
+    const observerOptions = {
+      root: null,
+      threshold: 0.2, // Trigger when 20% of the image is in view
+      rootMargin: '0px',
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          scooterImg.classList.add('animate-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    observer.observe(scooterImg);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Why Shop From Us?",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why Shop From Us?"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image (Scooter/Product)"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 0
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Start Shopping"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Feature Title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Why Shop From Us?",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Free & Fast Shipping"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "24/7 Dedicated customer service"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Warranty processing and service"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

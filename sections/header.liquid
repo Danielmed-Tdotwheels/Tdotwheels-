@@ -1,0 +1,833 @@
+{% comment %} Custom Header Rebuild - Last Updated: 2026-03-12 20:35 {% endcomment %}
+<style>
+  .custom-header-wrapper {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+    height: 95.77px; /* Desktop Height */
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1000;
+  }
+
+  /* Global Section Override for Stacking Context */
+  .section-header {
+    position: relative;
+    z-index: 10000 !important;
+  }
+
+  .custom-header-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+
+  /* Logo */
+  .custom-header-logo {
+    display: block;
+    line-height: 0;
+  }
+  .custom-header-logo img {
+    width: 97px;
+    height: 69px;
+    object-fit: contain;
+  }
+
+  /* Desktop Navigation Refinement */
+  .custom-header-nav {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    height: 100%;
+  }
+
+  .nav-item-wrapper {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .custom-header-nav-link {
+    text-decoration: none;
+    color: #000000;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.2;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    height: 100%;
+  }
+
+  .nav-item-wrapper:hover .custom-header-nav-link {
+    color: #d72308;
+  }
+
+  .nav-chevron-icon {
+    width: 10px;
+    height: 6px;
+    transition: transform 0.3s ease;
+  }
+
+  .nav-item-wrapper:hover .nav-chevron-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown Card */
+  .desktop-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1100;
+  }
+
+  .desktop-dropdown-separator {
+    height: 1px;
+    background-color: #e5e5e5;
+    margin: 8px 15px;
+  }
+
+  .view-all-brands-link {
+    font-weight: 600 !important;
+    color: #d72308 !important;
+  }
+
+  .nav-item-wrapper:hover .desktop-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .desktop-dropdown-link {
+    display: block;
+    padding: 8px 20px;
+    text-decoration: none;
+    color: #333333;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .desktop-dropdown-link:hover {
+    background: rgba(215, 35, 8, 0.05);
+    color: #d72308;
+  }
+
+  /* Icons Container */
+  .custom-header-icons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    height: 100%;
+  }
+
+  /* Generic Icon Styles */
+  .custom-icon-target,
+  .custom-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000000;
+    text-decoration: none;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .custom-icon-target img,
+  .custom-header-icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Predictive Search Bar - Premium Design */
+  .custom-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-search-form-container {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .header-search-form-container.active {
+    width: 500px;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media screen and (max-width: 768px) {
+    .header-search-form-container.active {
+      width: calc(100vw - 4rem);
+      position: fixed;
+      top: 60px;
+      left: 2rem;
+      right: 2rem;
+      transform: none;
+    }
+  }
+
+  .predictive-search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 40px;
+    padding: 2px 5px 2px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .search-input-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 12px;
+    opacity: 0.5;
+  }
+
+  .predictive-search-form {
+    width: 100%;
+    position: relative;
+  }
+
+  .predictive-search-form input[type='search'] {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 15px;
+    color: #333;
+    background: transparent !important;
+    padding: 10px 0;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .predictive-search-form input[type='search']::-webkit-search-decoration,
+  .predictive-search-form input[type='search']::-webkit-search-cancel-button,
+  .predictive-search-form input[type='search']::-webkit-search-results-button,
+  .predictive-search-form input[type='search']::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+  }
+
+  .predictive-search-form input[type='search']::placeholder {
+    color: #999;
+  }
+
+  .search-input-close {
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-left: 5px;
+    flex-shrink: 0;
+  }
+
+  .search-input-close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  #predictive-search {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+
+  /* Search Toggle Reset */
+  .custom-search-container {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  /* Cart Bubble */
+  .cart-count-bubble {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: #d72308;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* Mobile Hamburger */
+  .header-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    margin-left: 5px;
+  }
+  .header-hamburger img {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Mobile Menu Drawer */
+  .mobile-menu-drawer {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    background-color: #ffffff !important;
+    z-index: 10000;
+    transition: left 0.3s ease;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+  .mobile-menu-drawer.active {
+    left: 0;
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  .mobile-menu-close {
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+  }
+
+  .mobile-menu-links {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    text-decoration: none;
+    color: #000000;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .mobile-menu-item-content {
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-icon-wrapper {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+  }
+
+  .mobile-menu-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    display: block;
+    color: #000;
+  }
+
+  .mobile-menu-arrow {
+    width: 10px;
+    height: 6px;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+  .mobile-menu-arrow.rotated {
+    transform: rotate(180deg);
+  }
+
+  /* Submenu */
+  .mobile-submenu {
+    display: none;
+    flex-direction: column;
+    padding-left: 47px;
+    background: #fafafa;
+  }
+  .mobile-submenu.open {
+    display: flex;
+  }
+  .mobile-submenu a {
+    padding: 12px 0;
+    text-decoration: none;
+    color: #333;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
+  }
+  .mobile-submenu a:last-child {
+    border-bottom: none;
+  }
+
+  /* Overlay */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .mobile-menu-overlay.active {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  @media screen and (max-width: 990px) {
+    .custom-header-wrapper {
+      height: 60px;
+    }
+    .custom-header-container {
+      padding: 0 1.5rem;
+    }
+    .custom-header-nav,
+    .small-hide-desktop {
+      display: none !important;
+    }
+    .header-hamburger {
+      display: block;
+    }
+    .custom-header-logo img {
+      width: 65px;
+      height: 37px;
+    }
+    .custom-icon-target,
+    .custom-header-icon {
+      width: 28px;
+      height: 28px;
+    }
+    .custom-icon-target img,
+    .custom-header-icon img,
+    .header-hamburger img {
+      width: 20px;
+      height: 20px;
+    }
+    .custom-header-icons {
+      gap: 12px;
+    }
+    .cart-count-bubble {
+      width: 14px;
+      height: 14px;
+      font-size: 8px;
+      top: 0;
+      right: 0;
+    }
+  }
+</style>
+
+<div class="custom-header-wrapper">
+  <div class="custom-header-container">
+    <!-- Logo -->
+    <a href="{{ routes.root_url }}" class="custom-header-logo">
+      {%- if section.settings.logo != blank -%}
+        {%- assign logo_alt = section.settings.logo.alt | default: shop.name | escape -%}
+        {%- assign logo_height = section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio -%}
+        {{
+          section.settings.logo
+          | image_url: width: 300
+          | image_tag:
+            class: 'header__heading-logo',
+            widths: '50, 100, 150, 200, 250, 300',
+            height: logo_height,
+            width: section.settings.logo_width,
+            alt: logo_alt
+        }}
+      {%- else -%}
+        <img src="{{ 'design-logo.png' | asset_url }}" alt="{{ shop.name }}" width="97" height="69">
+      {%- endif -%}
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="custom-header-nav small-hide-desktop">
+      {% for link in section.settings.menu.links %}
+        <div class="nav-item-wrapper">
+          <a href="{{ link.url }}" class="custom-header-nav-link">
+            {{ link.title }}
+            {% if link.links != blank %}
+              <svg class="nav-chevron-icon" viewBox="0 0 10 6" fill="none">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            {% endif %}
+          </a>
+          {% if link.links != blank %}
+            <div class="desktop-dropdown">
+              {% for childlink in link.links %}
+                <a href="{{ childlink.url }}" class="desktop-dropdown-link">
+                  {{ childlink.title }}
+                </a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </nav>
+
+    <!-- Icons & Functions -->
+    <div class="custom-header-icons">
+      <!-- Search Toggle & Form -->
+      <div class="custom-search-wrapper" id="HeaderSearchWrapper">
+        <button type="button" class="custom-icon-target" id="SearchToggleOpen" aria-label="Open Search">
+          <img src="{{ 'design-icon-search.png' | asset_url }}" alt="Search" width="24" height="24">
+        </button>
+
+        <div class="header-search-form-container" id="HeaderSearchContainer">
+          <predictive-search data-loading-text="Loading...">
+            <form
+              action="{{ routes.search_url }}"
+              method="get"
+              role="search"
+              class="predictive-search-form"
+              id="PredictiveSearchForm"
+            >
+              <div class="predictive-search-input-wrapper">
+                <span class="search-input-icon">
+                  <img src="{{ 'design-icon-search.png' | asset_url }}" alt="" width="20" height="20">
+                </span>
+                <input
+                  id="SearchInput"
+                  type="search"
+                  name="q"
+                  value="{{ search.terms | escape }}"
+                  placeholder="Search by brands or name..."
+                  role="combobox"
+                  aria-expanded="false"
+                  aria-owns="predictive-search-results"
+                  aria-controls="predictive-search-results"
+                  aria-haspopup="listbox"
+                  aria-autocomplete="list"
+                  autocorrect="off"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                >
+                <button type="button" class="search-input-close" id="SearchToggleClose" aria-label="Close Search">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#d72308"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div id="predictive-search" tabindex="-1" data-predictive-search></div>
+              <span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span>
+            </form>
+          </predictive-search>
+        </div>
+      </div>
+
+      {%- comment -%} Cart {%- endcomment -%}
+      <a href="{{ routes.cart_url }}" class="custom-header-icon" id="cart-icon-bubble">
+        <img src="{{ 'design-icon-cart.png' | asset_url }}" alt="Cart" width="24" height="24">
+        {%- if cart.item_count > 0 -%}
+          <div class="cart-count-bubble">
+            <span aria-hidden="true">{{ cart.item_count }}</span>
+          </div>
+        {%- endif -%}
+      </a>
+
+      {%- comment -%} Account {%- endcomment -%}
+      <a
+        href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+        class="custom-header-icon"
+      >
+        <img src="{{ 'custom-icon-user.png' | asset_url }}" alt="Account" width="24" height="24">
+      </a>
+
+      <!-- Hamburger Button -->
+      <button class="header-hamburger" onclick="toggleMobileMenu()">
+        <img src="{{ 'design-icon-hamburger.png' | asset_url }}" alt="Menu" width="24" height="24">
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Menu Drawer -->
+<div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+<div class="mobile-menu-drawer" id="mobile-menu-drawer">
+  <div class="mobile-menu-header">
+    <button class="mobile-menu-close" onclick="toggleMobileMenu()">&times;</button>
+  </div>
+
+  <nav class="mobile-menu-links">
+    {% for link in section.settings.menu.links %}
+      <div class="mobile-menu-item-wrapper">
+        {%- assign link_handle = link.title | handle -%}
+        <a href="{{ link.url }}" class="mobile-menu-item" {% if link.links != blank %}onclick="toggleSubmenu('submenu-{{ forloop.index }}', this)"{% endif %}>
+          <div class="mobile-menu-item-content">
+            <div class="mobile-icon-wrapper">
+              {% case link_handle %}
+                {% when 'shop-by-brands' %}
+                  <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                {% when 'escooters' or 'e-scooters' %}
+                  <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 5.5 12 2.5 9 5.5"></polyline><line x1="12" y1="2.5" x2="12" y2="14.5"></line><circle cx="6.5" cy="17.5" r="3.5"></circle><circle cx="17.5" cy="17.5" r="3.5"></circle><path d="M10 17.5h4"></path></svg>
+                {% when 'ebikes' or 'e-bikes' %}
+                  <img src="{{ 'ebike-icon.png' | asset_url }}" class="mobile-menu-icon" alt="" width="24" height="24">
+                {% when 'ride-on-cars' %}
+                  <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H6.5c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5zM7.5 13c-.83 0-1.5.67-1.5 1.5S6.67 16 7.5 16s1.5-.67 1.5-1.5S8.33 13 7.5 13zm9 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/></svg>
+                {% when 'accessories' %}
+                  <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.5-3.5 3.5-7.5-7.5 3.5-3.5 7.5zM12 10.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/></svg>
+                {% when 'sports-and-fitness' %}
+                  <img src="{{ 'fit-icon.png' | asset_url }}" class="mobile-menu-icon" alt="" width="24" height="24">
+                {% when 'compare' %}
+                  <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M8 21H3v-5"></path><path d="M15 15l5.1 5.1"></path><path d="M3.9 3.9L9 9"></path></svg>
+                {% when 'helps-resources' or 'help-resources' %}
+                  <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                {% else %}
+                  <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              {% endcase %}
+            </div>
+            <span>{{ link.title }}</span>
+          </div>
+          {% if link.links != blank %}
+            <span class="mobile-menu-arrow">
+              <svg viewBox="0 0 10 6" fill="none">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          {% endif %}
+        </a>
+        {% if link.links != blank %}
+          <div class="mobile-submenu" id="submenu-{{ forloop.index }}">
+            {% for childlink in link.links %}
+              <a href="{{ childlink.url }}">{{ childlink.title }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <!-- Live Chat -->
+    <a href="#" class="mobile-menu-item">
+      <div class="mobile-menu-item-content">
+        <div class="mobile-icon-wrapper">
+          <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="#25D366">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </div>
+        <span>Live Chat</span>
+      </div>
+    </a>
+  </nav>
+</div>
+
+<script>
+  function toggleMobileMenu() {
+    var drawer = document.getElementById('mobile-menu-drawer');
+    var overlay = document.getElementById('mobile-menu-overlay');
+
+    if (drawer.classList.contains('active')) {
+      drawer.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    } else {
+      drawer.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  // Close menu when a standard link is clicked
+  document.addEventListener('DOMContentLoaded', function () {
+    const mobileLinks = document.querySelectorAll('.mobile-menu-drawer a:not([onclick])');
+    mobileLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        const drawer = document.getElementById('mobile-menu-drawer');
+        if (drawer.classList.contains('active')) {
+          toggleMobileMenu();
+        }
+      });
+    });
+  });
+
+  function toggleSubmenu(id, element) {
+    event.preventDefault();
+    var submenu = document.getElementById(id);
+    var arrow = element.querySelector('.mobile-menu-arrow');
+
+    if (submenu.classList.contains('open')) {
+      submenu.classList.remove('open');
+      arrow.classList.remove('rotated');
+    } else {
+      submenu.classList.add('open');
+      arrow.classList.add('rotated');
+    }
+  }
+
+  // Search Toggle Logic
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchToggleOpen = document.getElementById('SearchToggleOpen');
+    const searchToggleClose = document.getElementById('SearchToggleClose');
+    const searchContainer = document.getElementById('HeaderSearchContainer');
+    const searchInput = document.getElementById('SearchInput');
+
+    if (searchToggleOpen && searchContainer) {
+      searchToggleOpen.addEventListener('click', function () {
+        searchContainer.classList.add('active');
+        searchInput.focus();
+      });
+    }
+
+    if (searchToggleClose && searchContainer) {
+      searchToggleClose.addEventListener('click', function () {
+        searchContainer.classList.remove('active');
+        if (window.predictiveSearchInstance) {
+          window.predictiveSearchInstance.close(true);
+        }
+      });
+    }
+
+    // Close on escape
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && searchContainer.classList.contains('active')) {
+        searchContainer.classList.remove('active');
+      }
+    });
+
+    // Close on click outside
+    document.addEventListener('click', function (e) {
+      if (
+        !searchContainer.contains(e.target) &&
+        !searchToggleOpen.contains(e.target) &&
+        searchContainer.classList.contains('active')
+      ) {
+        searchContainer.classList.remove('active');
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Header",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 250,
+      "step": 10,
+      "default": 100,
+      "unit": "px",
+      "label": "Custom logo width"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand_link",
+      "name": "Brand Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "brand_name",
+          "label": "Brand Name",
+          "default": "Brand Name"
+        },
+        {
+          "type": "text",
+          "id": "brand_handle",
+          "label": "Collection Handle",
+          "default": "brand-handle",
+          "info": "The collection URL handle (e.g., 'segway' for /collections/segway)"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

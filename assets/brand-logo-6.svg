@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <path d="M5 30H45M25 10V50" stroke="#000" stroke-width="12" stroke-linecap="round"/>
+  <text x="60" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="900" fill="#000">PRIME</text>
+</svg>

@@ -1,0 +1,7 @@
+# Shopify Theme .gitignore
+config/settings_data.json
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+.shopify/

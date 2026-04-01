@@ -1,0 +1,1171 @@
+{% comment %}
+  Custom Collection Main - FIXED Black Fill + Category Filter
+{% endcomment %}
+
+<style>
+  html.lock-scroll,
+  html.lock-scroll body {
+    overflow: hidden !important;
+    height: 100% !important;
+  }
+  .collection-main-section {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: {{ section.settings.section_padding_top }}px {{ section.settings.section_padding_side }}px {{ section.settings.section_padding_bottom }}px;
+    background-color: {{ section.settings.section_bg_color }};
+    display: flex;
+    gap: 40px;
+    min-height: 800px;
+    box-sizing: border-box;
+  }
+
+  /* Sidebar */
+  .collection-sidebar {
+    width: 293px;
+    height: 1041px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  .collection-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .collection-sidebar::-webkit-scrollbar-thumb {
+    background: #e5e5e5;
+    border-radius: 4px;
+  }
+
+  .filter-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 25px;
+    color: #000;
+  }
+
+  .filter-group {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 20px;
+  }
+  .filter-group:last-child {
+    border-bottom: none;
+  }
+  .filter-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #000;
+    cursor: pointer;
+    list-style: none;
+    margin-bottom: 0;
+    height: 44px; /* Standard height */
+  }
+  .filter-group-header::-webkit-details-marker {
+    display: none;
+  }
+
+  /* ========== PRICE SLIDER - GUARANTEED BLACK FILL ========== */
+  .price-filter-box {
+    width: 261px;
+  }
+
+  .price-slider-container {
+    position: relative;
+    width: 100%;
+    height: 8px;
+    margin: 30px 0 25px 0;
+  }
+
+  /* Background Track (Grey) */
+  .price-track-bg {
+    position: absolute;
+    width: 100%;
+    height: 8px;
+    background-color: #e5e5e5;
+    border-radius: 4px;
+    top: 0;
+    left: 0;
+  }
+
+  /* Active Range Fill (BLACK) - MUST be visible */
+  .price-track-fill {
+    position: absolute;
+    height: 8px;
+    background-color: #000000;
+    border-radius: 4px;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+
+  /* Range Inputs - absolutely positioned over track */
+  .price-range-slider {
+    position: absolute;
+    top: -6px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: transparent;
+    -webkit-appearance: none;
+    pointer-events: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .price-range-slider::-webkit-slider-runnable-track {
+    height: 8px;
+    background: transparent;
+    border: none;
+  }
+
+  .price-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #000000;
+    cursor: pointer;
+    pointer-events: auto;
+    margin-top: -7px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .price-range-slider::-moz-range-track {
+    height: 8px;
+    background: transparent;
+  }
+
+  .price-range-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #000000;
+    cursor: pointer;
+    pointer-events: auto;
+    border: none;
+  }
+
+  /* Text Inputs */
+  .price-inputs-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .price-input-box {
+    flex: 1;
+    max-width: 105px;
+    height: 44px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    background: #fff;
+    gap: 4px;
+  }
+  .price-input-box .currency {
+    font-family: 'Work Sans';
+    font-weight: 600;
+    color: #000;
+  }
+  .price-text-field {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    outline: none;
+    text-align: left;
+  }
+  .price-text-field::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  .price-divider {
+    font-weight: 700;
+    color: #000;
+  }
+
+  /* ========== CHECKBOXES ========== */
+  .filter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .filter-item {
+    margin-bottom: 0;
+    height: 44px; /* Standard height */
+    display: flex;
+    align-items: center;
+  }
+
+  .filter-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    color: #555;
+    height: 44px; /* Force height for each item */
+    width: 100%;
+  }
+
+  .filter-checkbox-native {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .filter-checkbox-box {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .filter-checkbox-native:checked + .filter-checkbox-box {
+    background: #d72e08;
+    border-color: #d72e08;
+  }
+  .filter-checkbox-native:checked + .filter-checkbox-box::after {
+    content: '✓';
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .filter-count {
+    color: #999;
+    font-size: 12px;
+    margin-left: auto;
+  }
+
+  /* ========== GRID ========== */
+  .collection-grid-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .collection-top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+  }
+
+  .sort-select {
+    padding: 12px 40px 12px 20px;
+    border: 1px solid #e5e5e5;
+    border-radius: 30px;
+    font-family: 'Work Sans';
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+    appearance: none;
+    min-width: 220px;
+  }
+
+  .pagination-wrapper {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+  }
+  .pagination {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+  }
+  .pagination__item {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-family: 'Work Sans';
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .pagination__item:hover {
+    background: #f5f5f5;
+  }
+  .pagination__item--current {
+    background: #d72e08;
+    color: #fff;
+  }
+
+  .collection-grid-container.is-loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .no-products-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'Work Sans';
+    color: #666;
+  }
+  .no-products-message a {
+    color: #d72e08;
+  }
+
+  .coming-soon-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 20px;
+    font-family: 'Lato', sans-serif;
+  }
+  .coming-soon-message h2 {
+    font-size: 48px;
+    color: #d72e08;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+  }
+
+  /* Mobile Filter Trigger */
+  .mobile-filter-btn {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mobile-filter-btn:hover {
+    border-color: #d72e08;
+    color: #d72e08;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000; /* Higher z-index for visibility */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+  }
+  .sidebar-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .close-sidebar-btn {
+    display: none;
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  .mobile-only {
+    display: none !important;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .mobile-only {
+      display: block !important;
+    }
+    .collection-main-section {
+      flex-direction: column;
+      padding: 0 20px 20px; /* Zero top padding */
+      position: relative;
+    }
+
+    .collection-sidebar {
+      position: fixed;
+      bottom: 20px; /* Small gap from bottom */
+      left: 50%;
+      top: auto;
+      height: 512px;
+      width: 375px;
+      max-width: calc(100% - 40px);
+      background: #fff;
+      z-index: 1001;
+      transform: translate(-50%, 120%); /* Start below screen, centered */
+      transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      padding: 0;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .collection-sidebar.is-open {
+      transform: translate(-50%, 0);
+    }
+
+    .filter-form-scrollable {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px 20px;
+    }
+
+    /* Sticky Drawer Header */
+    .filter-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 0;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between; /* Space between Filter label and X button */
+      align-items: center;
+      height: 60px;
+    }
+    .filter-header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    /* Sticky Drawer Footer */
+    .filter-drawer-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #f0f0f0;
+      background: #fff;
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+    }
+
+    .show-results-btn {
+      width: 100%;
+      background: #d72e08;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      padding: 15px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Accordion Icons Styling */
+    .filter-group-header span:last-child {
+      font-size: 20px;
+      font-weight: 400;
+      color: #777;
+    }
+
+    details[open] .filter-group-header span:last-child::after {
+      content: '−';
+    }
+    details:not([open]) .filter-group-header span:last-child::after {
+      content: '+';
+    }
+    .filter-group-header .minus-plus-indicator {
+      display: none; /* Hide the static dash if we use dynamic content */
+    }
+
+    /* Force Hide Drawer Footer on Desktop if not already handled */
+    .filter-drawer-footer:not(.mobile-only) {
+      display: none;
+    }
+    .mobile-only {
+      display: flex;
+    }
+
+    .close-sidebar-btn {
+      display: block;
+    }
+
+    .mobile-filter-btn {
+      display: flex;
+      border: none; /* Match "text" look based on user feedback/image */
+      background: transparent;
+      padding: 0;
+      color: #000; /* Ensure text is black */
+    }
+    .mobile-filter-btn:hover {
+      background: transparent;
+      color: #d72e08;
+      border: none;
+    }
+
+    .collection-top-bar {
+      justify-content: space-between !important; /* Force space between */
+      gap: 10px;
+      width: 100%; /* Ensure bar takes full width */
+      margin-bottom: 10px;
+    }
+
+    .products-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .sort-select {
+      min-width: unset !important; /* Remove fixed width */
+      width: auto !important; /* Fit content */
+      flex: 0 0 auto !important; /* Prevent growing */
+      padding: 10px 30px 10px 15px; /* Adjust padding for mobile */
+      font-size: 13px; /* Slightly smaller text for fit */
+    }
+  }
+</style>
+
+{%- liquid
+  assign hide_section = false
+  for block in section.blocks
+    if block.type == 'collection_override'
+      if block.settings.collection_handle == collection.handle
+        if block.settings.hide_products
+          assign hide_section = true
+        endif
+        break
+      endif
+    endif
+  endfor
+-%}
+
+{%- unless hide_section -%}
+  <div class="collection-main-section">
+    <div class="sidebar-overlay" id="SidebarOverlay"></div>
+    {%- if section.settings.show_sidebar -%}
+      <aside class="collection-sidebar" id="CollectionSidebar">
+        <div class="filter-header">
+          <div class="filter-header-title">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+            <span>Filter</span>
+          </div>
+          <div class="close-sidebar-btn" id="CloseSidebarBtn">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+        </div>
+
+        <div class="filter-form-scrollable">
+          <form id="FacetFiltersForm">
+            <!-- ===== 1. PRICE RANGE (Always First) ===== -->
+            {%- assign price_filter = collection.filters | where: 'type', 'price_range' | first -%}
+            {%- if price_filter -%}
+              <div class="filter-group">
+                <details>
+                  <summary class="filter-group-header">
+                    <span>Price Range</span>
+                    <span class="accordion-icon"></span>
+                  </summary>
+                  <div style="padding-top: 15px;">
+                    {%- liquid
+                      assign max_price = price_filter.range_max | money_without_currency | replace: ',', '' | plus: 0
+                      assign min_val = 0
+                      assign max_val = max_price
+                      if price_filter.min_value.value
+                        assign min_val = price_filter.min_value.value | money_without_currency | replace: ',', '' | plus: 0
+                      endif
+                      if price_filter.max_value.value
+                        assign max_val = price_filter.max_value.value | money_without_currency | replace: ',', '' | plus: 0
+                      endif
+                    -%}
+
+                    <div class="price-filter-box" data-max-price="{{ max_price }}">
+                      <div class="price-slider-container">
+                        <div class="price-track-bg"></div>
+                        <div class="price-track-fill" id="priceTrackFill"></div>
+
+                        <input
+                          type="range"
+                          class="price-range-slider"
+                          id="priceSliderMin"
+                          min="0"
+                          max="{{ max_price }}"
+                          value="{{ min_val }}"
+                          step="10"
+                        >
+                        <input
+                          type="range"
+                          class="price-range-slider"
+                          id="priceSliderMax"
+                          min="0"
+                          max="{{ max_price }}"
+                          value="{{ max_val }}"
+                          step="10"
+                        >
+                      </div>
+
+                      <div class="price-inputs-row">
+                        <div class="price-input-box">
+                          <span class="currency">$</span>
+                          <input
+                            type="number"
+                            class="price-text-field"
+                            id="priceInputMin"
+                            name="{{ price_filter.min_value.param_name }}"
+                            value="{{ min_val }}"
+                            min="0"
+                            max="{{ max_price }}"
+                          >
+                        </div>
+                        <span class="price-divider">—</span>
+                        <div class="price-input-box">
+                          <span class="currency">$</span>
+                          <input
+                            type="number"
+                            class="price-text-field"
+                            id="priceInputMax"
+                            name="{{ price_filter.max_value.param_name }}"
+                            value="{{ max_val }}"
+                            min="0"
+                            max="{{ max_price }}"
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+            {%- endif -%}
+
+            <!-- ===== 2. CATEGORY FILTER (Uses Product Type) ===== -->
+            <div class="filter-group">
+              <details>
+                <summary class="filter-group-header">
+                  <span>Category</span>
+                  <span class="accordion-icon"></span>
+                </summary>
+                <ul class="filter-list" style="padding-top: 15px;">
+                  {%- comment -%} Get unique product types from collection {%- endcomment -%}
+                  {%- assign product_types = collection.products | map: 'type' | uniq -%}
+                  {%- if product_types.size > 0 -%}
+                    {%- for ptype in product_types -%}
+                      {%- if ptype != blank -%}
+                        <li class="filter-item">
+                          <label class="filter-label">
+                            <input
+                              type="checkbox"
+                              class="filter-checkbox-native category-filter"
+                              name="filter.p.product_type"
+                              value="{{ ptype | escape }}"
+                            >
+                            <span class="filter-checkbox-box"></span>
+                            <span>{{ ptype }}</span>
+                          </label>
+                        </li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- else -%}
+                    {%- comment -%} Fallback manual list if no product types found {%- endcomment -%}
+                    {%- assign manual_cats = 'Scooters,E-Bikes,Accessories' | split: ',' -%}
+                    {%- for cat in manual_cats -%}
+                      <li class="filter-item">
+                        <label class="filter-label">
+                          <input
+                            type="checkbox"
+                            class="filter-checkbox-native category-filter"
+                            name="filter.p.product_type"
+                            value="{{ cat }}"
+                          >
+                          <span class="filter-checkbox-box"></span>
+                          <span>{{ cat }}</span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  {%- endif -%}
+                </ul>
+              </details>
+            </div>
+
+            <!-- ===== 3. OTHER SHOPIFY NATIVE FILTERS (Availability, Product Type, Brand/Vendor) ===== -->
+            {%- for filter in collection.filters -%}
+              {%- if filter.type == 'price_range' -%}
+                {%- continue -%}
+              {%- endif -%}
+
+              <div class="filter-group">
+                <details>
+                  <summary class="filter-group-header">
+                    <span>{{ filter.label }}</span>
+                    <span class="accordion-icon"></span>
+                  </summary>
+                  <ul class="filter-list" style="padding-top: 15px;">
+                    {%- for value in filter.values -%}
+                      <li class="filter-item">
+                        <label class="filter-label" for="Filter-{{ filter.param_name }}-{{ forloop.index }}">
+                          <input
+                            type="checkbox"
+                            class="filter-checkbox-native"
+                            id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                            name="{{ value.param_name }}"
+                            value="{{ value.value }}"
+                            {% if value.active %}
+                              checked
+                            {% endif %}
+                            {% if value.count == 0 and value.active == false %}
+                              disabled
+                            {% endif %}
+                          >
+                          <span class="filter-checkbox-box"></span>
+                          <span>{{ value.label }}</span>
+                          <span class="filter-count">({{ value.count }})</span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </details>
+              </div>
+            {%- endfor -%}
+
+            <input
+              type="hidden"
+              name="sort_by"
+              id="sortByHidden"
+              value="{{ collection.sort_by | default: collection.default_sort_by }}"
+            >
+          </form>
+        </div>
+
+        <!-- Sticky Mobile Footer -->
+        <div class="filter-drawer-footer mobile-only">
+          <button type="button" class="show-results-btn" id="ShowResultsBtn">Show</button>
+        </div>
+      </aside>
+    {%- endif -%}
+
+    <!-- PRODUCT GRID -->
+    <div class="collection-grid-container" id="ProductGrid">
+      {% paginate collection.products by 9 %}
+        <div class="collection-top-bar">
+          {%- if section.settings.show_sidebar -%}
+            <button type="button" class="mobile-filter-btn" id="MobileFilterTrigger">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>
+              </svg>
+              Filter
+            </button>
+          {%- endif -%}
+
+          <select class="sort-select" id="SortBySelect">
+            <option value="">Sort by | Recommended</option>
+            {%- for option in collection.sort_options -%}
+              <option
+                value="{{ option.value }}"
+                {% if option.value == collection.sort_by %}
+                  selected
+                {% endif %}
+              >
+                {{ option.name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+
+        <div class="products-grid">
+          {%- if collection.all_products_count == 0 -%}
+            <div class="coming-soon-message">
+              <h2>Coming Soon</h2>
+            </div>
+          {%- else -%}
+            <!-- 
+              Debug Info:
+              - products_per_page setting: {{ section.settings.products_per_page }}
+              - collection.products_count: {{ collection.products_count }}
+              - collection.all_products_count: {{ collection.all_products_count }}
+              - paginate.items: {{ paginate.items }}
+              - paginate.pages: {{ paginate.pages }} 
+            -->
+            {%- for product in collection.products -%}
+              {% render 'custom-product-card', product: product %}
+            {%- else -%}
+              <div class="no-products-message">
+                <p>No products match your selected filters.</p>
+                <a href="{{ collection.url }}?view=custom">Clear all filters</a>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <div class="pagination-wrapper">
+            <ul class="pagination">
+              {%- if paginate.previous -%}
+                <li><a href="{{ paginate.previous.url }}" class="pagination__item">←</a></li>
+              {%- endif -%}
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <li>
+                    <a href="{{ part.url }}" class="pagination__item">{{ part.title }}</a>
+                  </li>
+                {%- else -%}
+                  <li>
+                    <span class="pagination__item {% if part.title == paginate.current_page %}pagination__item--current{% endif %}">
+                      {{- part.title -}}
+                    </span>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if paginate.next -%}
+                <li><a href="{{ paginate.next.url }}" class="pagination__item">→</a></li>
+              {%- endif -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      {% endpaginate %}
+    </div>
+  </div>
+{%- endunless -%}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('FacetFiltersForm');
+    const grid = document.getElementById('ProductGrid');
+    const sortSelect = document.getElementById('SortBySelect');
+    const sortHidden = document.getElementById('sortByHidden');
+
+    // Drawer Elements
+    const mobileTrigger = document.getElementById('MobileFilterTrigger');
+    const sidebar = document.getElementById('CollectionSidebar');
+    const overlay = document.getElementById('SidebarOverlay');
+    const closeBtn = document.getElementById('CloseSidebarBtn');
+    const showResultsBtn = document.getElementById('ShowResultsBtn');
+
+    function toggleDrawer(show) {
+      if (show) {
+        sidebar.classList.add('is-open');
+        overlay.classList.add('is-visible');
+        document.documentElement.classList.add('lock-scroll');
+      } else {
+        sidebar.classList.remove('is-open');
+        overlay.classList.remove('is-visible');
+        document.documentElement.classList.remove('lock-scroll');
+      }
+    }
+
+    if (mobileTrigger) {
+      mobileTrigger.addEventListener('click', () => toggleDrawer(true));
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => toggleDrawer(false));
+    }
+    if (overlay) {
+      overlay.addEventListener('click', () => toggleDrawer(false));
+    }
+    if (showResultsBtn) {
+      showResultsBtn.addEventListener('click', () => {
+        submitFilters();
+        toggleDrawer(false);
+      });
+    }
+
+    // Price Slider Elements
+    const sliderMin = document.getElementById('priceSliderMin');
+    const sliderMax = document.getElementById('priceSliderMax');
+    const inputMin = document.getElementById('priceInputMin');
+    const inputMax = document.getElementById('priceInputMax');
+    const fill = document.getElementById('priceTrackFill');
+
+    const priceGap = 50;
+    const maxPrice = sliderMax ? parseInt(sliderMax.max) : 2000;
+
+    /* ===== PRICE SLIDER - UPDATE BLACK FILL ===== */
+    function updateSliderFill() {
+      if (!sliderMin || !sliderMax || !fill) return;
+
+      let minVal = parseInt(sliderMin.value);
+      let maxVal = parseInt(sliderMax.value);
+
+      // Prevent overlap
+      if (maxVal - minVal < priceGap) {
+        if (this === sliderMin) {
+          sliderMin.value = maxVal - priceGap;
+          minVal = maxVal - priceGap;
+        } else {
+          sliderMax.value = minVal + priceGap;
+          maxVal = minVal + priceGap;
+        }
+      }
+
+      // Sync text inputs
+      inputMin.value = minVal;
+      inputMax.value = maxVal;
+
+      // Calculate percentages and update BLACK FILL
+      const leftPercent = (minVal / maxPrice) * 100;
+      const rightPercent = 100 - (maxVal / maxPrice) * 100;
+
+      fill.style.left = leftPercent + '%';
+      fill.style.right = rightPercent + '%';
+    }
+
+    if (sliderMin && sliderMax) {
+      sliderMin.addEventListener('input', updateSliderFill);
+      sliderMax.addEventListener('input', updateSliderFill);
+      sliderMin.addEventListener('change', debounceSubmit);
+      sliderMax.addEventListener('change', debounceSubmit);
+
+      // Init fill on load - call immediately and after a short delay
+      updateSliderFill();
+      setTimeout(updateSliderFill, 100);
+    }
+
+    if (inputMin && inputMax) {
+      inputMin.addEventListener('change', () => {
+        sliderMin.value = inputMin.value;
+        updateSliderFill();
+        debounceSubmit();
+      });
+      inputMax.addEventListener('change', () => {
+        sliderMax.value = inputMax.value;
+        updateSliderFill();
+        debounceSubmit();
+      });
+    }
+
+    /* ===== FILTER CHECKBOXES (Native + Category) ===== */
+    form.addEventListener('change', (e) => {
+      if (e.target.type === 'checkbox' || e.target.tagName === 'SELECT') {
+        debounceSubmit();
+      }
+    });
+
+    /* ===== SORT BY (USING DELEGATION) ===== */
+    document.addEventListener('change', (e) => {
+      if (e.target && e.target.id === 'SortBySelect') {
+        if (sortHidden) sortHidden.value = e.target.value;
+        debounceSubmit();
+      }
+    });
+
+    /* ===== AJAX SUBMISSION ===== */
+    let debounceTimer;
+    function debounceSubmit() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(submitFilters, 400);
+    }
+
+    function submitFilters() {
+      // Re-query elements that might have been replaced by AJAX
+      const activeForm = document.getElementById('FacetFiltersForm');
+      const activeSortSelect = document.getElementById('SortBySelect');
+      const activeSortHidden = document.getElementById('sortByHidden');
+      
+      if (!activeForm) return;
+
+      // Create search params from the filters form
+      const formData = new FormData(activeForm);
+      const params = new URLSearchParams(formData);
+      
+      // Force 'view=custom' to stay on the custom template
+      params.set('view', 'custom');
+      
+      // Ensure the sort_by value from the select is synced into params
+      if (activeSortSelect && activeSortSelect.value) {
+        params.set('sort_by', activeSortSelect.value);
+        if (activeSortHidden) activeSortHidden.value = activeSortSelect.value;
+      }
+
+      const searchParams = params.toString();
+      const url = `${window.location.pathname}?${searchParams}`;
+
+      grid.classList.add('is-loading');
+
+      fetch(url)
+        .then((res) => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.text();
+        })
+        .then((html) => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          
+          // Update the product grid
+          const newGrid = doc.getElementById('ProductGrid');
+          const currentGrid = document.getElementById('ProductGrid');
+          
+          if (newGrid && currentGrid) {
+            // We only want the inner content of the grid or the whole grid node?
+            // The current template matches #ProductGrid with the results.
+            currentGrid.innerHTML = newGrid.innerHTML;
+            
+            // Re-bind pagination links to use AJAX or update them
+            const newPagination = doc.querySelector('.pagination-wrapper');
+            const currentPagination = document.querySelector('.pagination-wrapper');
+            if (newPagination && currentPagination) {
+              currentPagination.innerHTML = newPagination.innerHTML;
+            } else if (newPagination) {
+              // Add pagination if it didn't exist before
+              const gridContainer = document.querySelector('.collection-grid-container');
+              if (gridContainer) gridContainer.appendChild(newPagination);
+            } else if (currentPagination) {
+              currentPagination.innerHTML = '';
+            }
+          }
+          
+          // Update the URL without refreshing
+          history.pushState({ path: url }, '', url);
+        })
+        .catch((err) => {
+          console.error('Filter error:', err);
+          // Optional: Show error message to user
+        })
+        .finally(() => {
+          grid.classList.remove('is-loading');
+        });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Collection Main",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 3,
+      "max": 240,
+      "step": 3,
+      "label": "Products per page",
+      "default": 9
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Desktop Columns",
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sidebar",
+      "label": "Show Sidebar Filters",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style Settings"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_side",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Horizontal (Desktop)",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection_override",
+      "name": "Collection Override",
+      "settings": [
+        {
+          "type": "text",
+          "id": "collection_handle",
+          "label": "Collection Handle (e.g. e-scooters)",
+          "info": "Applies only to this collection."
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_products",
+          "label": "Hide Product Grid & Sidebar",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Collection Main" }]
+}
+{% endschema %}

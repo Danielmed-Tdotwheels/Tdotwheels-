@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <path d="M30 10C18.9543 10 10 18.9543 10 30C10 41.0457 18.9543 50 30 50C41.0457 50 50 41.0457 50 30" stroke="#000" stroke-width="8"/>
+  <path d="M30 30L55 10" stroke="#000" stroke-width="8"/>
+  <text x="70" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="900" fill="#000">SWIFT</text>
+</svg>

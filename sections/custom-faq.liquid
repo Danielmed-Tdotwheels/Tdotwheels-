@@ -1,0 +1,420 @@
+{% if page.handle == 'customer-support' %}
+  <style>
+    .faq-section {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 80px 79px;
+      box-sizing: border-box;
+      display: flex;
+      gap: 100px;
+      background-color: #fff;
+    }
+
+    .faq-header {
+      flex: 0 0 440px;
+    }
+
+    .faq-title {
+      font-family: 'Lato', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #000;
+    }
+
+    .faq-subtitle {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 16px;
+      color: #6e6e73;
+      line-height: 1.5;
+      margin-bottom: 40px;
+    }
+
+    .faq-pills {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .faq-pill {
+      background: #f8f8f8;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #000;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+      width: fit-content;
+      text-align: left;
+    }
+
+    .faq-pill:hover,
+    .faq-pill.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .faq-content {
+      flex: 1;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid #eee;
+      padding: 24px 0;
+      display: none; /* Hidden by default */
+    }
+
+    .faq-item.visible {
+      display: block;
+    }
+
+    .faq-item:first-child {
+      padding-top: 0;
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 0;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #000;
+    }
+
+    .faq-icon {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, margin-top 0.3s ease;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 16px;
+      color: #6e6e73;
+      line-height: 1.6;
+    }
+
+    .faq-item.active .faq-answer {
+      margin-top: 15px;
+      max-height: 1000px;
+    }
+
+    @media screen and (max-width: 1024px) {
+      .faq-section {
+        padding: 60px 40px;
+        gap: 60px;
+      }
+      .faq-header {
+        flex: 0 0 300px;
+      }
+      .faq-title {
+        font-size: 28px;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .faq-section {
+        flex-direction: column;
+        padding: 40px 20px;
+        gap: 30px;
+      }
+      .faq-header {
+        flex: none;
+        width: 100%;
+      }
+      .faq-title {
+        font-size: 24px;
+        margin-bottom: 12px;
+        text-align: left;
+      }
+      .faq-subtitle {
+        font-size: 14px;
+        margin-bottom: 25px;
+        text-align: left;
+      }
+      .faq-pills {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .faq-pill {
+        padding: 8px 18px;
+        font-size: 13px;
+      }
+      .faq-question {
+        font-size: 16px;
+      }
+      .faq-answer {
+        font-size: 14px;
+      }
+    }
+  </style>
+
+  <section class="faq-section" id="faq-section-{{ section.id }}">
+    <div class="faq-header">
+      <h2 class="faq-title">{{ section.settings.title }}</h2>
+      <p class="faq-subtitle">{{ section.settings.subtitle }}</p>
+      <div class="faq-pills">
+        <button class="faq-pill active" onclick="filterFaq('tracking', this)">How to Track Your Order</button>
+        <button class="faq-pill" onclick="filterFaq('maintenance', this)">How to Maintain Your Electric Scooter</button>
+        <button class="faq-pill" onclick="filterFaq('shipping', this)">How Long Does Shipping Take?</button>
+      </div>
+    </div>
+
+    <div class="faq-content">
+      {% for block in section.blocks %}
+        <div
+          class="faq-item {% if block.settings.category == 'tracking' %}visible{% endif %}"
+          data-category="{{ block.settings.category }}"
+          {{ block.shopify_attributes }}
+        >
+          <button class="faq-question" onclick="toggleFaq(this)">
+            {{ block.settings.question }}
+            <span class="faq-icon">
+              <svg viewBox="0 0 10 6" fill="none">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            {{ block.settings.answer }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <script>
+    function toggleFaq(button) {
+      const item = button.parentElement;
+      const isActive = item.classList.contains('active');
+
+      // Close other items in the same visible category
+      document.querySelectorAll('.faq-item').forEach((el) => el.classList.remove('active'));
+
+      if (!isActive) {
+        item.classList.add('active');
+      }
+    }
+
+    function filterFaq(category, pill) {
+      // Update pills active state
+      const section = pill.closest('.faq-section');
+      section.querySelectorAll('.faq-pill').forEach((el) => el.classList.remove('active'));
+      pill.classList.add('active');
+
+      // Filter items
+      const items = section.querySelectorAll('.faq-item');
+      items.forEach((item) => {
+        if (item.getAttribute('data-category') === category) {
+          item.classList.add('visible');
+        } else {
+          item.classList.remove('visible');
+          item.classList.remove('active');
+        }
+      });
+    }
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "FAQ Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Description",
+      "default": "Quick answers to your most common questions about T-DOT Wheels from shipping to warranty to product care."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "category",
+          "label": "Category",
+          "options": [
+            { "value": "tracking", "label": "Order Tracking" },
+            { "value": "maintenance", "label": "Maintenance" },
+            { "value": "shipping", "label": "Shipping" }
+          ],
+          "default": "tracking"
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Question text goes here"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Answer content goes here</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Section",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "tracking",
+            "question": "Where can I find my tracking number?",
+            "answer": "<p>You will receive an automated email with your tracking number as soon as your order leaves our warehouse.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "tracking",
+            "question": "How do I check my order status?",
+            "answer": "<p>You can check your status by clicking the 'Track Order' link in your confirmation email or by logging into your account.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "tracking",
+            "question": "My tracking hasn't updated in 2 days.",
+            "answer": "<p>Carriers may experience delays in scanning. If there is no update for more than 4 business days, please contact us.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "tracking",
+            "question": "Can I redirect my package while in transit?",
+            "answer": "<p>For security reasons, we do not allow address redirections once the package has shipped.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "tracking",
+            "question": "What if my package is marked as delivered but missing?",
+            "answer": "<p>Please check around your property and with neighbors. If still not found, contact us within 48 hours.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "maintenance",
+            "question": "How often should I inflate the tires?",
+            "answer": "<p>We recommend checking tire pressure once a week to prevent flats and ensure a smooth ride.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "maintenance",
+            "question": "How do I clean the motor and deck?",
+            "answer": "<p>Use a damp cloth only. Never use a pressure washer or submerge any part of the scooter in water.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "maintenance",
+            "question": "Will riding in the cold damage the battery?",
+            "answer": "<p>Cold temperatures can temporary reduce range. Always store and charge your battery at room temperature.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "maintenance",
+            "question": "How do I tighten the folding mechanism?",
+            "answer": "<p>Use the provided hex keys to tighten the locking bolts if you notice any play in the stem.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "maintenance",
+            "question": "When should I replace my brake pads?",
+            "answer": "<p>Replace brake pads when the material is less than 1mm thick or if you notice reduced stopping power.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "shipping",
+            "question": "How long is the processing time?",
+            "answer": "<p>Orders are typically processed within 1-2 business days before shipping.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "shipping",
+            "question": "Which carriers do you use for delivery?",
+            "answer": "<p>We primarily use FedEx, UPS, and Canada Post for reliable delivery across the country.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "shipping",
+            "question": "Do you ship to remote northern regions?",
+            "answer": "<p>Yes, we ship nationwide, though shipping times may be longer for remote territories.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "shipping",
+            "question": "Are shipping boxes discreet?",
+            "answer": "<p>Most large items ship in their original manufacturer packaging, which may display branding.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "shipping",
+            "question": "Is insurance included in the shipping?",
+            "answer": "<p>Yes, all shipments are fully insured against loss or damage during transit.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

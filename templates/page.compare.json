@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "custom-compare",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

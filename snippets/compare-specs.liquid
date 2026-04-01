@@ -1,0 +1,20 @@
+{%- liquid
+  # Mapping metafields accurately based on previous research and product-spec-grid.liquid logic
+  assign speed = product.metafields.custom.top_speed | default: product.metafields.specification.max_speed | default: '-'
+  assign range = product.metafields.custom.range | default: product.metafields.specification.max_range | default: '-'
+  assign power = product.metafields.custom.rated_power | default: product.metafields.specification.power | default: '-'
+  assign payload = product.metafields.custom.max_payload | default: product.metafields.specification.max_load | default: '-'
+  assign climb = product.metafields.custom.climb_ability | default: '-'
+  assign connectivity = product.metafields.custom.connectivity | default: product.metafields.specification.connectivity | default: 'Yes'
+  assign display = product.metafields.custom.display | default: product.metafields.specification.display | default: 'Yes'
+  assign weight = product.metafields.custom.scooter_weight | default: product.metafields.specification.weight | default: '-'
+-%}
+
+<div class="compare-row-value">{{ speed }}</div>
+<div class="compare-row-value">{{ range }}</div>
+<div class="compare-row-value">{{ power }}</div>
+<div class="compare-row-value">{{ payload }}</div>
+<div class="compare-row-value">{{ climb }}</div>
+<div class="compare-row-value">{{ connectivity }}</div>
+<div class="compare-row-value">{{ display }}</div>
+<div class="compare-row-value">{{ weight }}</div>

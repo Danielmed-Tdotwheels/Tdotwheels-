@@ -1,0 +1,342 @@
+{% comment %}
+  Refined Warranty Support - Premium UI & Animations Redesign
+{% endcomment %}
+
+{% style %}
+  .premium-support-{{ section.id }} {
+    padding: {{ section.settings.padding_top }}px 5% {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.section_bg | default: '#000000' }};
+    text-align: center;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+  }
+
+  .premium-support-content-{{ section.id }} {
+    max-width: 800px;
+    margin: 0 auto 60px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .premium-support-content-{{ section.id }}.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .premium-support-heading-{{ section.id }} {
+    font-family: 'Lato', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 900;
+    margin-bottom: 24px;
+    color: {{ section.settings.heading_color | default: '#ffffff' }};
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+  }
+
+  .premium-support-subheading-{{ section.id }} {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 19px;
+    line-height: 1.6;
+    color: {{ section.settings.subheading_color | default: 'rgba(255, 255, 255, 0.6)' }};
+    font-weight: 400;
+  }
+
+  .premium-support-channels-container-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .support-card-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 32px 24px;
+    background: {{ section.settings.card_bg | default: '#f8f8f8' }};
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: {{ section.settings.subheading_color | default: '#555555' }};
+    text-decoration: none;
+    border-radius: 28px;
+    border: 1px solid {{ section.settings.card_border | default: '#eeeeee' }};
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    flex: 1;
+    min-width: 250px;
+    max-width: 320px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .support-card-{{ section.id }}.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .support-card-{{ section.id }}:hover {
+    transform: translateY(-8px);
+    background: {{ section.settings.card_bg_hover | default: 'rgba(255, 255, 255, 0.05)' }};
+    border-color: var(--accent-color);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
+  }
+
+  .support-icon-box-{{ section.id }} {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 16px;
+    color: var(--accent-color);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.4s ease;
+  }
+
+  .support-card-{{ section.id }}:hover .support-icon-box-{{ section.id }} {
+    background: var(--accent-color);
+    color: #fff;
+    transform: scale(1.1);
+  }
+
+  .support-icon-box-{{ section.id }} svg,
+  .support-icon-box-{{ section.id }} img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  .support-icon-box-{{ section.id }} svg {
+    fill: currentColor;
+  }
+
+  .support-label-{{ section.id }} {
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+    color: {{ section.settings.heading_color | default: '#111111' }};
+  }
+
+  @media (max-width: 768px) {
+    .support-card-{{ section.id }} {
+      min-width: 100%;
+      padding: 30px 20px;
+    }
+    .premium-support-{{ section.id }} {
+      padding: 60px 24px;
+    }
+    .premium-support-content-{{ section.id }} {
+      margin-bottom: 40px;
+    }
+  }
+{% endstyle %}
+
+<div class="premium-support-{{ section.id }}" id="WarrantySupport-{{ section.id }}">
+  <div class="premium-support-content-{{ section.id }} reveal-stagger">
+    <h2 class="premium-support-heading-{{ section.id }}">{{ section.settings.heading }}</h2>
+    <p class="premium-support-subheading-{{ section.id }}">{{ section.settings.subheading }}</p>
+  </div>
+
+  <div class="premium-support-channels-container-{{ section.id }}">
+    {% for block in section.blocks %}
+      <a 
+        href="{{ block.settings.link | default: '#' }}" 
+        class="support-card-{{ section.id }} reveal-stagger" 
+        style="--accent-color: {{ block.settings.accent_color | default: '#d72308' }};"
+        {{ block.shopify_attributes }}
+      >
+        <div class="support-icon-box-{{ section.id }}">
+          {%- if block.settings.custom_icon != blank -%}
+             <img 
+                src="{{ block.settings.custom_icon | image_url: width: 100 }}" 
+                alt="{{ block.settings.label | escape }}" 
+                loading="lazy"
+                width="{{ block.settings.custom_icon.width }}"
+                height="{{ block.settings.custom_icon.height }}"
+              >
+          {%- else -%}
+            {% case block.settings.icon %}
+              {% when 'phone' %}
+                <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+              {% when 'chat' %}
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+              {% when 'whatsapp' %}
+                <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2zm5.45 13.52c-.25.7-.7 1.22-1.3 1.55-.5.25-1.12.35-2.03-.02-.91-.37-1.54-.74-2.24-1.22-.7-.48-1.54-1.2-2.12-1.85-.58-.65-1.02-1.28-1.32-1.85-.3-.57-.45-1.1-.4-1.63.05-.53.25-1.02.6-1.42.35-.4.8-.5 1.05-.5.25 0 .5.02.65.1.15.08.35.2.45.42.1.22.35.85.38.92.03.07.05.15.02.22-.03.07-.05.15-.12.23-.07.08-.12.18-.2.25-.08.07-.18.15-.08.3.1.15.45.75.96 1.2.51.45 1.04.81 1.62 1.08.58.27.75.25.96.02.21-.23.9-.98 1.13-1.32.23-.34.45-.28.75-.17.3.11 1.93.91 2.26 1.07.33.16.55.24.63.38.08.14.08.82-.17 1.52z"/></svg>
+              {% when 'email' %}
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            {% endcase %}
+          {%- endif -%}
+        </div>
+        <span class="support-label-{{ section.id }}">{{ block.settings.label }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const staggers = entry.target.querySelectorAll('.reveal-stagger');
+          staggers.forEach((el, index) => {
+            setTimeout(() => {
+              el.classList.add('active');
+            }, index * 100);
+          });
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const target = document.getElementById('WarrantySupport-{{ section.id }}');
+    if (target) observer.observe(target);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Warranty Support Premium",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Typography & Colors"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Ready to support you"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#111111"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "If you have any questions about your warranty or need help, our team is standing by."
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color",
+      "default": "#555555"
+    },
+    {
+      "type": "header",
+      "content": "Section Styles"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card Background",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_hover",
+      "label": "Card Background (Hover)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Card Border",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "support_channel",
+      "name": "Warranty Support Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom Icon (SVG/PNG Recommended)"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Or Choose Preset Icon",
+          "options": [
+            { "value": "phone", "label": "Phone" },
+            { "value": "chat", "label": "Live Chat" },
+            { "value": "whatsapp", "label": "WhatsApp" },
+            { "value": "email", "label": "Email" }
+          ],
+          "default": "phone"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "label",
+          "label": "Display Label",
+          "default": "Call Us"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Channel Link"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Block Accent Color",
+          "default": "#d72308"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Warranty Support Premium",
+      "blocks": [
+        { "type": "support_channel", "settings": { "icon": "phone", "label": "Call Support" } },
+        { "type": "support_channel", "settings": { "icon": "chat", "label": "Live Expert Chat" } },
+        { "type": "support_channel", "settings": { "icon": "whatsapp", "label": "WhatsApp Desk" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

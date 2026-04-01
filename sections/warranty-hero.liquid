@@ -1,0 +1,242 @@
+{% comment %}
+  Refined Warranty Hero - Compact & Professional Tdot Wheels Redesign
+{% endcomment %}
+
+{% style %}
+  .premium-hero-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    min-height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.padding_top }}px 5% {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.bg_color | default: '#000' }};
+    color: {{ section.settings.text_color | default: '#fff' }};
+    overflow: hidden;
+  }
+
+  .premium-hero-bg-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .premium-hero-img-{{ section.id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: {{ section.settings.image_opacity | divided_by: 100.0 | default: 0.6 }};
+    transform: scale(1.05);
+    transition: transform 10s ease-out;
+  }
+
+  .premium-hero-{{ section.id }}.is-loaded .premium-hero-img-{{ section.id }} {
+    transform: scale(1);
+  }
+
+  .premium-hero-overlay-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: {{ section.settings.overlay_color | default: 'rgba(0,0,0,0.4)' }};
+    z-index: 2;
+  }
+
+  .premium-hero-glass-card-{{ section.id }} {
+    position: relative;
+    z-index: 5;
+    max-width: 900px;
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 32px;
+    text-align: center;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .premium-hero-{{ section.id }}.is-loaded .premium-hero-glass-card-{{ section.id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .premium-hero-heading-{{ section.id }} {
+    font-family: 'Lato', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    color: {{ section.settings.heading_color | default: '#ffffff' }};
+  }
+
+  .premium-hero-subheading-{{ section.id }} {
+    font-family: 'Work Sans', sans-serif;
+    font-size: clamp(17px, 2vw, 21px);
+    line-height: 1.5;
+    color: {{ section.settings.text_color | default: 'rgba(255, 255, 255, 0.9)' }};
+    max-width: 650px;
+    margin: 0 auto;
+    font-weight: 400;
+  }
+
+  @media (max-width: 768px) {
+    .premium-hero-{{ section.id }} {
+      min-height: 350px;
+      padding: 60px 20px;
+    }
+    .premium-hero-glass-card-{{ section.id }} {
+      padding: 40px 20px;
+      border-radius: 20px;
+    }
+    .premium-hero-heading-{{ section.id }} {
+      font-size: 32px;
+    }
+  }
+{% endstyle %}
+
+<section class="premium-hero-{{ section.id }}" id="PremiumHero-{{ section.id }}">
+  <div class="premium-hero-bg-{{ section.id }}">
+    {% if section.settings.background_image %}
+      <img
+        src="{{ section.settings.background_image | image_url: width: 2500 }}"
+        class="premium-hero-img-{{ section.id }}"
+        alt="{{ section.settings.heading | escape }}"
+        loading="eager"
+        width="{{ section.settings.background_image.width }}"
+        height="{{ section.settings.background_image.height }}"
+      >
+    {% else %}
+       <div class="premium-hero-img-{{ section.id }}" style="background: linear-gradient(45deg, #111, #222); height: 100%;"></div>
+    {% endif %}
+    <div class="premium-hero-overlay-{{ section.id }}"></div>
+  </div>
+
+  <div class="premium-hero-glass-card-{{ section.id }}">
+    {%- if section.settings.tagline != blank -%}
+      <div style="font-size: 12px; font-weight: 800; letter-spacing: 4px; color: #d72e08; margin-bottom: 20px; text-transform: uppercase;">{{ section.settings.tagline }}</div>
+    {%- endif -%}
+    <h1 class="premium-hero-heading-{{ section.id }}">{{ section.settings.heading }}</h1>
+    <p class="premium-hero-subheading-{{ section.id }}">{{ section.settings.subheading }}</p>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const hero = document.getElementById('PremiumHero-{{ section.id }}');
+    if (hero) {
+      setTimeout(() => {
+        hero.classList.add('is-loaded');
+      }, 100);
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Warranty Hero Premium",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "PEACE OF MIND"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Warranty & Support"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "We stand behind the quality of our products and are committed to supporting you after your purchase."
+    },
+    {
+      "type": "header",
+      "content": "Visuals"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "range",
+      "id": "image_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Image Opacity",
+      "default": 60
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay Color",
+      "default": "rgba(0,0,0,0.4)"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fallback Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Warranty Hero Premium"
+    }
+  ]
+}
+{% endschema %}

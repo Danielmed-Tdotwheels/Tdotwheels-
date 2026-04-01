@@ -1,0 +1,641 @@
+{% comment %} Custom Checkout Review Section — Premium Pre-Checkout Experience {% endcomment %}
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'custom-cart.css' | asset_url | stylesheet_tag }}
+
+<style>
+  .checkout-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 30px 2rem;
+    font-family: 'Work Sans', sans-serif;
+    background: #f8f8f8;
+    border-radius: 20px;
+  }
+  .checkout-header {
+    margin-bottom: 40px;
+  }
+  .checkout-header h1 {
+    font-family: 'Lato', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .checkout-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 60px;
+  }
+  .checkout-main h2 {
+    font-family: 'Lato', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .checkout-main h2 a {
+    font-size: 14px;
+    color: #d72308;
+    text-decoration: underline;
+  }
+  .checkout-form-group {
+    margin-bottom: 30px;
+  }
+  .checkout-input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  @media screen and (max-width: 768px) {
+    .checkout-input-row {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  .checkout-field-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .checkout-field-wrapper.full {
+    width: 100%;
+  }
+  .checkout-field-label {
+    position: absolute;
+    top: 50%;
+    left: 25px;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #999;
+    pointer-events: none;
+    font-family: 'Work Sans', sans-serif;
+    transition: all 0.2s ease;
+    z-index: 1;
+  }
+  .checkout-input {
+    width: 100%;
+    padding: 16px 25px;
+    border: 1px solid #e5e5e5;
+    border-radius: 50px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    box-sizing: border-box;
+    background: #fff;
+    appearance: none;
+    position: relative;
+  }
+  .checkout-field-wrapper:focus-within .checkout-field-label,
+  .checkout-input:not(:placeholder-shown) + .checkout-field-label,
+  .checkout-field-label.active {
+    top: 10px;
+    transform: translateY(0);
+    font-size: 10px;
+    color: #999;
+  }
+  .checkout-input:focus {
+    outline: none;
+    border-color: #d72308;
+    padding-top: 22px;
+    padding-bottom: 10px;
+  }
+  .checkout-input:not(:placeholder-shown) {
+    padding-top: 22px;
+    padding-bottom: 10px;
+  }
+  select.checkout-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 25px center;
+  }
+  .checkout-input::placeholder {
+    color: #ccc;
+  }
+  .checkout-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: #888;
+    margin-top: 10px;
+  }
+  .checkout-checkbox-group input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #e5e5e5;
+  }
+  .checkout-section-divider {
+    border-top: 1px solid #f0f0f0;
+    margin: 40px 0;
+  }
+
+  /* Payment Method Display */
+  .payment-method-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .payment-method-item {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+  .payment-method-item.active {
+    border-color: #d72308;
+    box-shadow: 0 4px 12px rgba(215, 35, 8, 0.05);
+  }
+  .payment-method-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1;
+  }
+  .payment-method-left label {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .payment-method-icons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .payment-method-icons img {
+    width: 51px;
+    height: 32px;
+    object-fit: contain;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    padding: 2px;
+    background: #fff;
+  }
+
+  /* Sidebar */
+  .checkout-sidebar {
+    background: #ffffff;
+  }
+  .checkout-summary-card {
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.015);
+  }
+  .checkout-summary-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  .checkout-summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #666;
+  }
+  .checkout-summary-row.total {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+    margin-top: 12px;
+    font-weight: 700;
+    color: #000;
+    font-size: 18px;
+  }
+  .checkout-discount-box {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .checkout-discount-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    background: #f9f9f9;
+  }
+  .checkout-discount-btn {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 0 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Items in Summary */
+  .checkout-summary-items {
+    margin-top: 25px;
+  }
+  .checkout-summary-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 8px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+  }
+  .checkout-summary-item-img {
+    width: 60px;
+    height: 60px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .checkout-summary-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .checkout-summary-item-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .checkout-summary-item-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+    color: #000;
+    text-decoration: none;
+  }
+  .checkout-summary-item-price-row {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .checkout-summary-item-price {
+    font-size: 16px;
+    color: #d72308;
+    font-weight: 700;
+  }
+  .checkout-summary-item-old-price {
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+  }
+  .checkout-summary-item-qty {
+    font-size: 12px;
+    color: #999;
+  }
+  .checkout-shoppay-note {
+    font-size: 13px;
+    color: #666;
+    margin: 15px 0;
+    line-height: 1.4;
+  }
+  .checkout-shoppay-note strong {
+    color: #000;
+  }
+  .checkout-shoppay-note a {
+    color: #000;
+    text-decoration: underline;
+  }
+  .checkout-secure-footer {
+    border-top: 1px solid #f0f0f0;
+    margin-top: 25px;
+    padding-top: 20px;
+    text-align: center;
+  }
+  .checkout-secure-title {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 15px;
+  }
+  .checkout-secure-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .checkout-secure-icons img {
+    height: 30px;
+    width: auto;
+    border: 1px solid #eee;
+    border-radius: 4px;
+  }
+
+  .pay-now-btn {
+    width: 100%;
+    max-width: 654px;
+    height: 48px;
+    background: #d72308;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: background 0.2s;
+  }
+  .pay-now-btn:hover {
+    background: #b51d07;
+  }
+
+  .checkout-legal-note {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    margin-top: 20px;
+    max-width: 654px;
+    line-height: 1.5;
+  }
+  .checkout-legal-note a {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  /* Security badge strip */
+  .checkout-secure-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #999;
+  }
+  .checkout-secure-strip svg {
+    width: 16px;
+    height: 16px;
+    color: #22c55e;
+  }
+
+  @media screen and (max-width: 992px) {
+    .checkout-container {
+      margin: 0;
+      padding: 30px 1.5rem;
+      border-radius: 0;
+      background: #fff;
+    }
+    .checkout-layout {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    .checkout-header {
+      text-align: left;
+      margin-bottom: 25px;
+    }
+    .checkout-sidebar {
+      order: 1;
+    }
+    .checkout-header h1 {
+      font-size: 28px;
+    }
+  }
+</style>
+
+<div class="checkout-container" id="checkout-root">
+  <div class="checkout-header">
+    <h1>Review Your Order</h1>
+  </div>
+
+  <div class="checkout-layout">
+    <div class="checkout-main">
+      {%- if customer -%}
+        <h2>Contact Information</h2>
+        <div class="checkout-form-group">
+          <p style="font-size: 15px; color: #333;">
+            Logged in as <strong>{{ customer.email }}</strong>
+          </p>
+        </div>
+        <div class="checkout-section-divider"></div>
+      {%- endif -%}
+
+      <h2>Your Items</h2>
+      <div class="checkout-form-group">
+        {%- if cart.item_count > 0 -%}
+          {%- for item in cart.items -%}
+            <div style="display: flex; gap: 15px; padding: 15px; background: #fff; border: 1px solid #f0f0f0; border-radius: 12px; margin-bottom: 10px;">
+              <div style="width: 80px; height: 80px; background: #f9f9f9; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                {%- if item.image -%}
+                  <img
+                    src="{{ item.image | image_url: width: 200 }}"
+                    alt="{{ item.title | escape }}"
+                    width="80"
+                    height="80"
+                    loading="lazy"
+                    style="width: 100%; height: 100%; object-fit: contain;"
+                  >
+                {%- endif -%}
+              </div>
+              <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                <a
+                  href="{{ item.url }}"
+                  style="font-size: 15px; font-weight: 600; color: #000; text-decoration: none; margin-bottom: 4px;"
+                >
+                  {{ item.product.title }}
+                </a>
+                {%- unless item.product.has_only_default_variant -%}
+                  <span style="font-size: 13px; color: #888;">{{ item.variant.title }}</span>
+                {%- endunless -%}
+                <div style="display: flex; gap: 8px; align-items: baseline; margin-top: 4px;">
+                  <span style="font-size: 16px; color: #d72308; font-weight: 700;">{{ item.final_price | money }}</span>
+                  {%- if item.original_price != item.final_price -%}
+                    <span style="font-size: 13px; color: #999; text-decoration: line-through;">
+                      {{- item.original_price | money -}}
+                    </span>
+                  {%- endif -%}
+                  <span style="font-size: 13px; color: #999; margin-left: auto;">Qty: {{ item.quantity }}</span>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <p style="text-align: center; padding: 40px; color: #999;">Your cart is empty.</p>
+        {%- endif -%}
+      </div>
+
+      {%- if cart.item_count > 0 -%}
+        <div class="checkout-section-divider"></div>
+
+        <h2>Accepted Payment Methods</h2>
+        <div class="payment-method-list">
+          <div class="payment-method-item active">
+            <div class="payment-method-left">
+              <label>Credit / Debit Card</label>
+            </div>
+            <div class="payment-method-icons">
+              <img src="{{ 'design-payment-mastercard.png' | asset_url }}" alt="Mastercard" width="51" height="32">
+              <img src="{{ 'design-payment-visa.png' | asset_url }}" alt="Visa" width="51" height="32">
+              <img src="{{ 'design-payment-amex.png' | asset_url }}" alt="Amex" width="51" height="32">
+            </div>
+          </div>
+
+          <div class="payment-method-item">
+            <div class="payment-method-left">
+              <label>PayPal</label>
+            </div>
+            <div class="payment-method-icons">
+              <img src="{{ 'design-payment-paypal.png' | asset_url }}" alt="PayPal" width="51" height="32">
+            </div>
+          </div>
+
+          <div class="payment-method-item">
+            <div class="payment-method-left">
+              <label>Shop Pay</label>
+            </div>
+            <div class="payment-method-icons">
+              <img src="{{ 'design-payment-shop.png' | asset_url }}" alt="Shop Pay" width="51" height="32">
+            </div>
+          </div>
+
+          <div class="payment-method-item">
+            <div class="payment-method-left">
+              <label>Google Pay</label>
+            </div>
+            <div class="payment-method-icons">
+              <img src="{{ 'design-payment-googlepay.png' | asset_url }}" alt="Google Pay" width="51" height="32">
+            </div>
+          </div>
+
+          <div class="payment-method-item">
+            <div class="payment-method-left">
+              <label>Apple Pay</label>
+            </div>
+            <div class="payment-method-icons">
+              <img src="{{ 'design-payment-applepay.png' | asset_url }}" alt="Apple Pay" width="51" height="32">
+            </div>
+          </div>
+        </div>
+
+        {%- comment -%}
+          This is the REAL checkout form. It posts to Shopify's /cart endpoint
+          with the "checkout" name, which triggers Shopify's real, secure checkout.
+        {%- endcomment -%}
+        <form action="{{ routes.cart_url }}" method="post" id="custom-checkout-form">
+          <button
+            type="submit"
+            name="checkout"
+            class="pay-now-btn"
+          >
+            Proceed to Secure Checkout
+          </button>
+        </form>
+
+        <div class="checkout-secure-strip">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+          <span>Payments are processed securely by Shopify</span>
+        </div>
+
+        <p class="checkout-legal-note">
+          By continuing, you agree to T-Dot Wheels
+          <a href="/policies/terms-of-service">Terms of Service</a> and acknowledge the
+          <a href="/policies/privacy-policy">Privacy Policy</a>.
+        </p>
+      {%- endif -%}
+    </div>
+
+    <div class="checkout-sidebar">
+      <div class="checkout-summary-card">
+        <h2 class="checkout-summary-title">Order Summary</h2>
+
+        <div class="checkout-summary-row">
+          <span
+            >Subtotal ({{ cart.item_count }}
+            {% if cart.item_count == 1 %}item{% else %}items{% endif %})</span
+          >
+          <span>{{ cart.total_price | money }}</span>
+        </div>
+        <div class="checkout-summary-row">
+          <span>Shipping</span>
+          <span>Calculated at checkout</span>
+        </div>
+        <div class="checkout-summary-row">
+          <span>Estimated Tax</span>
+          <span>Calculated at checkout</span>
+        </div>
+
+        <div class="checkout-summary-row total">
+          <span>Estimated Total</span>
+          <span style="color: #d72308;">{{ cart.total_price | money }}</span>
+        </div>
+
+        <p style="font-size: 13px; color: #999; margin: 10px 0;">Tax & shipping calculated at checkout.</p>
+
+        <p class="checkout-shoppay-note">
+          {% assign installment_price = cart.total_price | divided_by: 4 %}
+          From {{ installment_price | money }}/mo at 0% APR with
+          <img
+            src="{{ 'design-payment-shop-installments.png' | asset_url }}"
+            width="63"
+            height="15"
+            style="vertical-align: middle; margin: 0 4px;"
+            alt="Shop Pay"
+          >
+          <a href="#">Check plan details</a>
+        </p>
+
+        <div class="checkout-summary-items">
+          {% for item in cart.items %}
+            <div class="checkout-summary-item">
+              <div class="checkout-summary-item-img">
+                <img
+                  src="{{ item.image | image_url: width: 160 }}"
+                  alt="{{ item.title }}"
+                  width="80"
+                  height="80"
+                  loading="lazy"
+                >
+              </div>
+              <div class="checkout-summary-item-info">
+                <a href="{{ item.url }}" class="checkout-summary-item-title">{{ item.product.title }}</a>
+                <div class="checkout-summary-item-price-row">
+                  <span class="checkout-summary-item-price">{{ item.final_price | money }}</span>
+                  {% if item.original_price != item.final_price %}
+                    <span class="checkout-summary-item-old-price">{{ item.original_price | money }}</span>
+                  {% endif %}
+                </div>
+                <div class="checkout-summary-item-qty">Quantity: {{ item.quantity }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="checkout-secure-footer">
+          <p class="checkout-secure-title">100% Secure payments</p>
+          <div class="checkout-secure-icons">
+            <img src="{{ 'design-payment-amex.png' | asset_url }}" alt="Amex" width="51" height="32">
+            <img src="{{ 'design-payment-applepay.png' | asset_url }}" alt="Apple Pay" width="51" height="32">
+            <img src="{{ 'design-payment-diners.png' | asset_url }}" alt="Diners" width="51" height="32">
+            <img src="{{ 'design-payment-discover.png' | asset_url }}" alt="Discover" width="51" height="32">
+            <img src="{{ 'design-payment-mastercard.png' | asset_url }}" alt="Mastercard" width="51" height="32">
+            <img src="{{ 'design-payment-paypal.png' | asset_url }}" alt="Paypal" width="51" height="32">
+            <img src="{{ 'design-payment-shop.png' | asset_url }}" alt="Shop Pay" width="51" height="32">
+            <img src="{{ 'design-payment-visa.png' | asset_url }}" alt="Visa" width="51" height="32">
+            <img src="{{ 'design-payment-googlepay.png' | asset_url }}" alt="Google Pay" width="51" height="32">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Main Checkout",
+  "settings": []
+}
+{% endschema %}

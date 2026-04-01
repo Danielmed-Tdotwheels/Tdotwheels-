@@ -1,0 +1,109 @@
+{% comment %} Custom Thank You Section - Forced Sync {% endcomment %}
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'custom-cart.css' | asset_url | stylesheet_tag }}
+
+<style>
+  .thank-you-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 2rem;
+    text-align: center;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .thank-you-image {
+    width: 128px;
+    height: 128px;
+    margin: 0 auto 30px;
+    display: block;
+  }
+  .thank-you-header h1 {
+    font-family: 'Lato', sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .order-number {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .thank-you-note {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 60px;
+  }
+
+  .related-section {
+    margin-top: 100px;
+    text-align: left;
+  }
+  .related-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  .related-header h2 {
+    font-family: 'Lato', sans-serif;
+    font-size: 32px;
+    margin: 0;
+  }
+  .related-header a {
+    color: #d72308;
+    font-size: 14px;
+    text-decoration: underline;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  @media screen and (max-width: 992px) {
+    .related-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media screen and (max-width: 480px) {
+    .thank-you-header h1 {
+      font-size: 32px;
+    }
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="thank-you-container">
+  <img src="{{ 'design-thanks-icon.png' | asset_url }}" class="thank-you-image" alt="Success" width="128" height="128">
+  <div class="thank-you-header">
+    <h1>
+      Thank you for your Order! {% if customer %}{{ customer.first_name }}{% else %}{{ 'Customer' }}{% endif %}
+    </h1>
+  </div>
+  <p class="order-number">Order #74889999</p>
+  <p class="thank-you-note">
+    We’ve emailed a receipt with your order details to
+    {% if customer %}{{ customer.email }}{% else %}joedoe@gmail.com{% endif %}
+  </p>
+
+  <div class="related-section">
+    <div class="related-header">
+      <h2>You May Also Like</h2>
+      <a href="/collections/all">See All</a>
+    </div>
+    <div class="related-grid">
+      {% comment %} Rendering 4 related products as a fallback or static display for now {% endcomment %}
+      {% for product in collections.all.products limit: 4 %}
+        {% render 'custom-product-card', product: product %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Main Thank You",
+  "settings": []
+}
+{% endschema %}

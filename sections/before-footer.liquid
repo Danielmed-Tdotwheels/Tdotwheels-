@@ -1,0 +1,236 @@
+<style>
+  .before-footer-section {
+    background-color: #000000;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 30px 0; /* Vertical padding to achieve desired height */
+    box-sizing: border-box;
+  }
+
+  .before-footer-container {
+    width: 1440px; /* Section width */
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 80px; /* (1440 - 1280) / 2 = 80px side padding to reach 1280px content width */
+    box-sizing: border-box;
+  }
+
+  .before-footer-banner-wrapper {
+    width: 1280px;
+    height: 225px;
+    max-width: 100%;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .before-footer-banner-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .before-footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+    width: 100%;
+  }
+
+  .before-footer-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 36px;
+    font-weight: 600; /* Semi-bold */
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+    color: #ffffff;
+  }
+
+  .before-footer-text {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    width: 420px;
+    max-width: 100%;
+    margin: 0 auto 25px auto;
+    line-height: 1.5;
+    color: #ffffff;
+  }
+
+  .before-footer-form-wrapper {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .before-footer-form {
+    display: flex;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .before-footer-input {
+    flex-grow: 1;
+    border: none;
+    padding: 12px 20px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    color: #000000;
+    outline: none;
+  }
+
+  .before-footer-submit {
+    background-color: #d72308;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+
+  .before-footer-submit:hover {
+    background-color: #b01d06;
+  }
+
+  .before-footer-submit img {
+    width: 20px;
+    height: 20px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    .before-footer-container {
+      padding: 0 20px;
+    }
+    .before-footer-banner-wrapper {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1280 / 225;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .before-footer-banner-wrapper {
+      aspect-ratio: 4 / 3; /* Better for mobile */
+      height: 200px;
+    }
+    .before-footer-title {
+      font-size: 28px;
+    }
+    .before-footer-text {
+      width: 100%;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<div class="before-footer-section">
+  <div class="before-footer-container">
+    <div class="before-footer-banner-wrapper">
+      {%- if section.settings.banner_image != blank -%}
+        {{
+          section.settings.banner_image
+          | image_url: width: 1280
+          | image_tag:
+            loading: 'lazy',
+            width: 1280,
+            height: 225,
+            alt: section.settings.banner_image.alt
+            | default: 'Newsletter Banner'
+        }}
+      {%- else -%}
+        <img
+          src="{{ 'before-footer-banner.png' | asset_url }}"
+          alt="Newsletter Banner"
+          width="1280"
+          height="225"
+          loading="lazy"
+        >
+      {%- endif -%}
+    </div>
+
+    <div class="before-footer-content">
+      <h2 class="before-footer-title">{{ section.settings.title }}</h2>
+      <p class="before-footer-text">{{ section.settings.text }}</p>
+
+      <div class="before-footer-form-wrapper">
+        {% form 'customer', class: 'before-footer-form' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <input
+            type="email"
+            name="contact[email]"
+            class="before-footer-input"
+            value="{{ form.email }}"
+            placeholder="{{ section.settings.placeholder }}"
+            autocorrect="off"
+            autocapitalize="off"
+            autocomplete="email"
+            required
+          >
+          <button type="submit" class="before-footer-submit" name="commit" aria-label="Subscribe">
+            {%- if section.settings.button_icon != blank -%}
+              {{
+                section.settings.button_icon
+                | image_url: width: 40
+                | image_tag: loading: 'lazy', width: 20, height: 20, alt: 'Send'
+              }}
+            {%- else -%}
+              <img src="{{ 'custom-send-icon.png' | asset_url }}" alt="Send" width="20" height="20">
+            {%- endif -%}
+          </button>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Before Footer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner Image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Receive a 20% off coupon."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "Sign-up and get your 20% discount now, auto applied at checkout."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email Placeholder",
+      "default": "Enter your email address"
+    },
+    {
+      "type": "image_picker",
+      "id": "button_icon",
+      "label": "Button Icon (Send)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before Footer"
+    }
+  ]
+}
+{% endschema %}

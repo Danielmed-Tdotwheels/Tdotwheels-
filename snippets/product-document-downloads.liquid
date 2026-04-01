@@ -1,0 +1,106 @@
+{% comment %}
+  Product Document Downloads for Tdot Wheels
+  Renders download buttons for the User Manual and Spec Sheet from 'specification' metafields.
+{% endcomment %}
+
+{%- liquid
+  assign user_manual = product.metafields.specification.user_manual.value
+  assign spec_sheet = product.metafields.specification.spec_sheet.value
+-%}
+
+{%- if user_manual != blank or spec_sheet != blank -%}
+  <div class="product-documents-container">
+    <div class="product-documents-list">
+      {%- if user_manual != blank -%}
+        <a href="{{ user_manual.url }}" class="doc-download-btn" target="_blank" download>
+          <span class="doc-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/>
+            </svg>
+          </span>
+          <div class="doc-info">
+            <span class="doc-label">Download</span>
+            <span class="doc-name">User Manual (PDF)</span>
+          </div>
+        </a>
+      {%- endif -%}
+
+      {%- if spec_sheet != blank -%}
+        <a href="{{ spec_sheet.url }}" class="doc-download-btn" target="_blank" download>
+          <span class="doc-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <div class="doc-info">
+            <span class="doc-label">Download</span>
+            <span class="doc-name">Spec Sheet (PDF)</span>
+          </div>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+<style>
+  .product-documents-container {
+    margin: 20px 0;
+  }
+  .product-documents-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .doc-download-btn {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    text-decoration: none;
+    color: #444;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 250px;
+  }
+  .doc-download-btn:hover {
+    border-color: #d72308;
+    background: #fffafa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(215, 35, 8, 0.08);
+  }
+  .doc-icon {
+    width: 40px;
+    height: 40px;
+    background: #f8f8f8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d72308;
+  }
+  .doc-info {
+    display: flex;
+    flex-direction: column;
+  }
+  .doc-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 0.5px;
+  }
+  .doc-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+  }
+
+  @media screen and (max-width: 768px) {
+    .doc-download-btn {
+      min-width: 100%;
+    }
+  }
+</style>

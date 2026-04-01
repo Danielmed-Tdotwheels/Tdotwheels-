@@ -1,0 +1,68 @@
+/* Custom Collection UI Refinement */
+
+.facets-container {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* Dark pill-shaped facets */
+.facets__summary {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 40px;
+  padding: 10px 25px !important;
+  transition: all 0.3s ease;
+}
+
+.facets__summary:hover {
+  border-color: #d72308;
+}
+
+.facets__display {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+}
+
+/* Primary Red brand elements */
+.form-control:checked,
+.facet-checkbox input:checked + svg {
+  color: #d72308 !important;
+}
+
+/* Typography Consistency */
+.facets__summary-label,
+.facet-checkbox,
+.facets__item,
+.facet-filters__label,
+.select__select {
+  font-family: 'Work Sans', sans-serif !important;
+  font-weight: 500;
+}
+
+/* Desktop Sidebar Tweaks */
+.facets-vertical .facets__summary {
+  border-radius: 8px;
+  background: transparent;
+  padding-left: 0 !important;
+  border: none;
+}
+
+.facets-vertical .facets__disclosure-vertical {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 15px;
+}
+
+/* Mobile grid optimization */
+@media screen and (max-width: 749px) {
+  .product-grid {
+    column-gap: 12px !important;
+    row-gap: 16px !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  .grid__item {
+    padding: 0 !important;
+  }
+}

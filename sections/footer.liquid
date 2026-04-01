@@ -1,0 +1,481 @@
+{% comment %} Custom Footer Rebuild {% endcomment %}
+<style>
+  .custom-footer-wrapper {
+    background-color: #000000;
+    color: #ffffff;
+    width: 100%;
+    min-height: 363px;
+    padding: 40px 60px; /* Reduced from 60px 80px */
+    font-family: 'Work Sans', sans-serif;
+  }
+
+  .custom-footer-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .footer-col-1 {
+    width: 15%;
+  }
+  .footer-col-2 {
+    width: 18%;
+  }
+  .footer-col-3 {
+    width: 18%;
+  }
+  .footer-col-4 {
+    width: 18%;
+  }
+
+  /* Wrapper for right column content (Newsletter + Social) on desktop */
+  .footer-right-col-wrapper {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer-heading {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 18px; /* Reduced from 24px */
+    color: #ffffff;
+  }
+
+  .footer-link {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #ffffff;
+    text-decoration: none;
+    margin-bottom: 10px; /* Reduced from 12px */
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .footer-link:hover {
+    opacity: 1;
+  }
+
+  .footer-logo img {
+    width: 94px;
+    height: 64px;
+    object-fit: contain;
+  }
+
+  .footer-newsletter-form {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 4px;
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+  .footer-newsletter-input {
+    border: none;
+    padding: 12px;
+    flex-grow: 1;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    color: #000;
+  }
+  .footer-newsletter-btn {
+    background: #d72308;
+    border: none;
+    padding: 10px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .footer-newsletter-btn img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+  }
+
+  .footer-bottom {
+    margin-top: 40px; /* Reduced from 60px */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+  }
+  .footer-copyright {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 749px) {
+    .custom-footer-wrapper {
+      padding: 30px 20px; /* Reduced from 40px 20px */
+      height: auto;
+    }
+    .custom-footer-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0;
+    }
+
+    /* Logo - Full Width Row 1 */
+    .footer-col-1 {
+      width: 100%;
+      margin-bottom: 30px;
+      order: 1;
+    }
+
+    /* Best Sellers & Support - Row 2 */
+    .footer-col-2 {
+      width: 48%;
+      order: 2;
+    }
+    .footer-col-3 {
+      width: 48%;
+      order: 3;
+    }
+
+    /* Info & Social - Row 3 */
+    .footer-col-4 {
+      width: 48%;
+      order: 4;
+      margin-top: 30px;
+    }
+
+    /* Unwrap the right column wrapper so children participate in the grid */
+    .footer-right-col-wrapper {
+      display: contents;
+    }
+
+    .footer-social-section {
+      width: 48%;
+      order: 5;
+      margin-top: 30px;
+    }
+
+    /* Newsletter - Full Width Row 4 */
+    .footer-newsletter-section {
+      width: 100%;
+      order: 6;
+      margin-top: 30px;
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+      text-align: center;
+      align-items: center;
+    }
+    .footer-bottom > div {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  }
+</style>
+
+<div class="custom-footer-wrapper">
+  <div class="custom-footer-container">
+    <!-- Col 1: Logo -->
+    <div class="footer-col footer-col-1">
+      <div class="footer-logo">
+        {%- if section.settings.footer_logo != blank -%}
+          <img
+            src="{{ section.settings.footer_logo | image_url: width: 400 }}"
+            alt="{{ shop.name }}"
+            width="{{ section.settings.logo_width }}"
+            height="auto"
+          >
+        {%- else -%}
+          <img src="{{ 'design-footer-logo.png' | asset_url }}" alt="{{ shop.name }}" width="94" height="64">
+        {%- endif -%}
+      </div>
+      <p style="margin-top:10px; font-weight:700; font-size:12px;"></p>
+    </div>
+
+    <!-- Col 2: Best Sellers -->
+    <div class="footer-col footer-col-2">
+      <h3 class="footer-heading">Best Sellers</h3>
+      {%- assign best_sellers_menu = section.settings.best_sellers_menu -%}
+      {%- for link in linklists[best_sellers_menu].links -%}
+        <a href="{{ link.url }}" class="footer-link">{{ link.title }}</a>
+      {%- endfor -%}
+    </div>
+
+    <!-- Col 3: Support -->
+    <div class="footer-col footer-col-3">
+      <h3 class="footer-heading">Support</h3>
+      {%- assign support_menu = section.settings.support_menu -%}
+      {%- for link in linklists[support_menu].links -%}
+        <a href="{{ link.url }}" class="footer-link">{{ link.title }}</a>
+      {%- endfor -%}
+    </div>
+
+    <!-- Col 4: Info -->
+    <div class="footer-col footer-col-4">
+      <h3 class="footer-heading">Info</h3>
+      {%- assign info_menu = section.settings.info_menu -%}
+      {%- for link in linklists[info_menu].links -%}
+        <a href="{{ link.url }}" class="footer-link">{{ link.title }}</a>
+      {%- endfor -%}
+    </div>
+
+    <!-- Right Column Wrapper (Newsletter + Social) -->
+    <div class="footer-right-col-wrapper">
+      <!-- Newsletter Section -->
+      <div class="footer-newsletter-section">
+        <h3 class="footer-heading">Join Our Community</h3>
+        <form class="footer-newsletter-form">
+          <input type="email" placeholder="Enter your email address" class="footer-newsletter-input">
+          <button type="submit" class="footer-newsletter-btn">
+            <img src="{{ 'design-icon-send.png' | asset_url }}" alt="Subscribe" width="20" height="20">
+          </button>
+        </form>
+      </div>
+
+      <!-- Social Section -->
+      <div class="footer-social-section">
+        <h3 class="footer-heading">Follow Us</h3>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          {%- comment -%} 1. Render Dedicated Section Socials (always visible) {%- endcomment -%}
+          {%- liquid
+            assign main_socials = 'facebook,instagram,youtube,tiktok' | split: ','
+            for platform in main_socials
+              assign link_id = platform | append: '_link'
+              assign icon_id = platform | append: '_icon'
+              assign link = section.settings[link_id]
+              assign custom_icon = section.settings[icon_id]
+              render 'footer-social-link', platform: platform, link: link, custom_icon: custom_icon
+            endfor
+          -%}
+
+          {%- comment -%} 2. Render Additional Block Socials {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'social_icon' -%}
+              <a
+                href="{{ block.settings.link }}"
+                aria-label="{{ block.settings.platform_name }}"
+                class="footer-social-icon-wrapper"
+                style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"
+                {{ block.shopify_attributes }}
+              >
+                {%- if block.settings.icon_image != blank -%}
+                  <img
+                    src="{{ block.settings.icon_image | image_url: width: 100 }}"
+                    alt="{{ block.settings.platform_name }}"
+                    width="{{ block.settings.icon_width }}"
+                    height="{{ block.settings.icon_height }}"
+                    style="object-fit: contain;"
+                  >
+                {%- endif -%}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-copyright">&copy; 2025 T-DOT WHEELS</div>
+    <div style="display: flex; gap: 5px; align-items: center;">
+      <img src="{{ 'design-payment-visa.png' | asset_url }}" alt="Visa" width="25" height="16">
+      <img src="{{ 'design-payment-shop.png' | asset_url }}" alt="Shop Pay" width="25" height="16">
+      <img src="{{ 'design-payment-mastercard.png' | asset_url }}" alt="Mastercard" width="25" height="16">
+      <img src="{{ 'design-payment-paypal.png' | asset_url }}" alt="PayPal" width="25" height="16">
+      <img src="{{ 'design-payment-maestro.png' | asset_url }}" alt="Maestro" width="25" height="16">
+      <img src="{{ 'design-payment-applepay.png' | asset_url }}" alt="Apple Pay" width="25" height="16">
+      <img src="{{ 'design-payment-diners.png' | asset_url }}" alt="Diners Club" width="25" height="16">
+      <img src="{{ 'design-payment-discover.png' | asset_url }}" alt="Discover" width="25" height="16">
+      <img src="{{ 'design-payment-amex.png' | asset_url }}" alt="American Express" width="25" height="16">
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Footer Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Footer Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 300,
+      "step": 5,
+      "default": 95,
+      "unit": "px",
+      "label": "Logo Width"
+    },
+    {
+      "type": "header",
+      "content": "Menu Settings"
+    },
+    {
+      "type": "link_list",
+      "id": "best_sellers_menu",
+      "label": "Best Sellers Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "support_menu",
+      "label": "Support Menu",
+      "default": "footer"
+    },
+    {
+      "type": "link_list",
+      "id": "info_menu",
+      "label": "Info Menu",
+      "default": "footer"
+    },
+    {
+      "type": "header",
+      "content": "Social Media Links"
+    },
+    {
+      "type": "paragraph",
+      "content": "Icons show by default. Add links to connect them. Upload a custom image to replace the default icon."
+    },
+    {
+      "type": "url",
+      "id": "facebook_link",
+      "label": "Facebook Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "facebook_icon",
+      "label": "Facebook Icon (replace default)"
+    },
+    {
+      "type": "url",
+      "id": "instagram_link",
+      "label": "Instagram Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "instagram_icon",
+      "label": "Instagram Icon (replace default)"
+    },
+    {
+      "type": "url",
+      "id": "youtube_link",
+      "label": "YouTube Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "youtube_icon",
+      "label": "YouTube Icon (replace default)"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_link",
+      "label": "TikTok Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "tiktok_icon",
+      "label": "TikTok Icon (replace default)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "social_icon",
+      "name": "Social Icon",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon Image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "platform_name",
+          "label": "Platform Name (Accessibility)",
+          "default": "Social Media"
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "default": 25,
+          "unit": "px",
+          "label": "Icon Width"
+        },
+        {
+          "type": "range",
+          "id": "icon_height",
+          "min": 10,
+          "max": 50,
+          "step": 1,
+          "default": 24,
+          "unit": "px",
+          "label": "Icon Height"
+        }
+      ]
+    },
+    {
+      "type": "footer_link_list",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Quick links",
+          "label": "Heading"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "default": "footer",
+          "label": "Menu"
+        }
+      ]
+    },
+    {
+      "type": "footer_text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Heading",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "subtext",
+          "default": "<p>Share contact information, store details, and brand content with your customers.</p>",
+          "label": "Text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

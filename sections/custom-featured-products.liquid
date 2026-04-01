@@ -1,0 +1,404 @@
+<style>
+  .featured-products-section {
+    max-width: 1440px;
+    margin: 60px auto;
+    padding: 0 60px;
+  }
+  .featured-products-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .featured-products-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+  }
+  @media screen and (max-width: 768px) {
+    .featured-products-title {
+      font-size: 20px;
+    }
+  }
+
+  .featured-tabs-nav {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+  }
+  .featured-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 28px;
+    background: rgba(0, 0, 0, 0.03);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #444;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+  .featured-tab-btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+  }
+  .tab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+  }
+  .featured-tab-btn img,
+  .featured-tab-btn svg {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+  }
+  .featured-tab-btn.is-active {
+    background: #d72308;
+    color: #ffffff;
+  }
+  .featured-tab-btn.is-active img,
+  .featured-tab-btn.is-active svg {
+    filter: brightness(0) invert(1);
+  }
+
+  .featured-products-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--desktop-columns, 4), 1fr);
+    gap: 24px;
+    display: none;
+  }
+  .featured-products-grid.is-active {
+    display: grid;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .featured-products-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media screen and (max-width: 900px) {
+    .featured-products-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .featured-products-section {
+      padding: 0 10px;
+      margin: 20px auto;
+    }
+    .featured-products-header {
+      margin-bottom: 20px;
+    }
+    .featured-tabs-nav {
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
+      margin-bottom: 20px;
+      gap: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .featured-tabs-nav::-webkit-scrollbar {
+      display: none;
+    }
+    .featured-tab-btn {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      font-size: 13px;
+      gap: 8px;
+    }
+    .featured-products-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    /* Hide items after the 4th one on mobile to show only 2 rows */
+    .featured-products-grid > :nth-of-type(n + 5) {
+      display: none;
+    }
+  }
+</style>
+
+<div
+  class="featured-products-section"
+  id="FeaturedProducts-{{ section.id }}"
+  style="--desktop-columns: {{ section.settings.columns_desktop }};"
+>
+  <div class="featured-products-header">
+    <h2 class="featured-products-title">{{ section.settings.title }}</h2>
+  </div>
+
+  <div class="featured-tabs-nav">
+    <button class="featured-tab-btn is-active" data-tab="new-arrivals">
+      <span class="tab-icon">
+        {%- if section.settings.new_arrivals_icon != blank -%}
+          <img
+            src="{{ section.settings.new_arrivals_icon | image_url: width: 40 }}"
+            alt="{{ section.settings.new_arrivals_title }}"
+            width="20"
+            height="20"
+          >
+        {%- else -%}
+          <img
+            src="{{ 'new-arrival-icon.png' | asset_url }}"
+            alt="New Arrivals"
+            width="20"
+            height="20"
+            style="display:block; object-fit:contain;"
+          >
+        {%- endif -%}
+      </span>
+      <span>{{ section.settings.new_arrivals_title }}</span>
+    </button>
+
+    {%- for block in section.blocks -%}
+      <button class="featured-tab-btn" data-tab="tab-{{ forloop.index }}" {{ block.shopify_attributes }}>
+        <span class="tab-icon">
+          {%- if block.settings.icon != blank -%}
+            <img
+              src="{{ block.settings.icon | image_url: width: 40 }}"
+              alt="{{ block.settings.tab_title }}"
+              width="20"
+              height="20"
+            >
+          {%- else -%}
+            {%- liquid
+              assign tab_title = block.settings.tab_title | downcase
+            -%}
+            {%- if tab_title contains 'bike' -%}
+              <img
+                src="{{ 'ebike-icon.png' | asset_url }}"
+                alt="E-Bikes"
+                width="20"
+                height="20"
+                style="display:block; object-fit:contain;"
+              >
+            {%- elsif tab_title contains 'scooter' -%}
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M19,15c-1.66,0-3,1.34-3,3s1.34,3,3,3s3-1.34,3-3S20.66,15,19,15z M19,19c-0.55,0-1-0.45-1-1s0.45-1,1-1s1,0.45,1,1S19.55,19,19,19z M5,15c-1.66,0-3,1.34-3,3s1.34,3,3,3s3-1.34,3-3S6.66,15,5,15z M5,19c-0.55,0-1-0.45-1-1s0.45-1,1-1s1,0.45,1,1S5.55,19,5,19z M13.5,10V3h-3v2h1v5h-2L7,18h2.11L11,13h5v2h2v-5H13.5z"/>
+              </svg>
+            {%- elsif tab_title contains 'car' -%}
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H6.5c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5zM7.5 13c-.83 0-1.5.67-1.5 1.5S6.67 16 7.5 16s1.5-.67 1.5-1.5S8.33 13 7.5 13zm9 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/>
+              </svg>
+            {%- elsif tab_title contains 'access' -%}
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.5-3.5 3.5-7.5-7.5 3.5-3.5 7.5zM12 10.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/>
+              </svg>
+            {%- elsif tab_title contains 'sport' or tab_title contains 'fit' -%}
+              <img
+                src="{{ 'fit-icon.png' | asset_url }}"
+                alt="Sports and Fitness"
+                width="20"
+                height="20"
+                style="display:block; object-fit:contain;"
+              >
+            {%- else -%}
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            {%- endif -%}
+          {%- endif -%}
+        </span>
+        <span>{{ block.settings.tab_title }}</span>
+      </button>
+    {%- endfor -%}
+  </div>
+
+  <div class="featured-content-container">
+    {%- comment -%} New Arrivals Grid {%- endcomment -%}
+    <div class="featured-products-grid is-active" id="new-arrivals">
+      {%- liquid
+        assign manual_products = section.settings.manual_products
+        assign limit = section.settings.arrivals_limit
+        assign products_to_show = manual_products
+
+        if section.settings.enable_auto
+          assign auto_products = collections.all.products | sort: 'created_at' | reverse
+          for product in auto_products
+            if products_to_show.size >= limit
+              break
+            endif
+
+            # Check for duplicates
+            assign is_duplicate = false
+            for manual_product in manual_products
+              if product.id == manual_product.id
+                assign is_duplicate = true
+                break
+              endif
+            endfor
+
+            unless is_duplicate
+              assign products_to_show = products_to_show | concat: product
+            endunless
+          endfor
+        endif
+      -%}
+
+      {%- for product in products_to_show limit: limit -%}
+        {% render 'custom-product-card', product: product %}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Dynamic Category Grids {%- endcomment -%}
+    -
+    {%- for block in section.blocks -%}
+      <div class="featured-products-grid" id="tab-{{ forloop.index }}">
+        {%- if block.settings.collection != blank -%}
+          {%- for product in block.settings.collection.products limit: section.settings.products_to_show -%}
+            {% render 'custom-product-card', product: product %}
+          {%- endfor -%}
+        {%- else -%}
+          <p style="grid-column: 1/-1; text-align: center; color: #888;">No products found in this collection.</p>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('FeaturedProducts-{{ section.id }}');
+    if (!container) return;
+
+    const tabs = container.querySelectorAll('.featured-tab-btn');
+    const grids = container.querySelectorAll('.featured-products-grid');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab');
+
+        // Update tabs
+        tabs.forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+
+        // Update grids
+        grids.forEach((g) => {
+          g.classList.remove('is-active');
+          if (g.id === target) {
+            g.classList.add('is-active');
+          }
+        });
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Featured Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Featured Products"
+    },
+    {
+      "type": "header",
+      "content": "New Arrivals Tab"
+    },
+    {
+      "type": "text",
+      "id": "new_arrivals_title",
+      "label": "Tab Title",
+      "default": "New Arrivals"
+    },
+    {
+      "type": "image_picker",
+      "id": "new_arrivals_icon",
+      "label": "Tab Icon"
+    },
+    {
+      "type": "product_list",
+      "id": "manual_products",
+      "label": "Manual Product Selection",
+      "limit": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_auto",
+      "label": "Enable Automatic Fallback (Latest Products)",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "arrivals_limit",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "label": "Total Products to Show (New Arrivals)",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Number of columns on desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 24,
+      "step": 1,
+      "label": "Maximum products to show (Category Tabs)",
+      "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category Tab",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title",
+          "default": "Category"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Custom Icon (Optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Featured Products",
+      "blocks": [
+        { "type": "category", "settings": { "tab_title": "E-Bikes" } },
+        { "type": "category", "settings": { "tab_title": "Ride on Cars" } },
+        { "type": "category", "settings": { "tab_title": "Accessories" } },
+        { "type": "category", "settings": { "tab_title": "Sports and Fitness" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

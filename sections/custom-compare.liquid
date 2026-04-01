@@ -1,0 +1,501 @@
+{% if page.handle == 'compare' or page.handle == 'compare-1' %}
+  {%- style -%}
+    /* Force global overflow visible for sticky to work correctly on mobile */
+    html,
+    body {
+       overflow: visible !important;
+       overflow-x: visible !important;
+    }
+
+    #shopify-section-{{ section.id }} {
+      overflow: visible !important;
+    }
+
+    .compare-page-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 20px 80px 80px;
+      background-color: #fff;
+    }
+
+    /* Breadcrumb */
+    .compare-breadcrumb {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+    }
+    .compare-breadcrumb a {
+      text-decoration: none;
+      color: #888;
+    }
+    .compare-breadcrumb .separator {
+      color: #888;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Header */
+    .compare-header {
+      margin-bottom: 60px;
+      text-align: center; /* Center on desktop */
+    }
+    .compare-title {
+      font-family: 'Lato', sans-serif;
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: #000;
+      max-width: 870px; /* Constrain width as requested */
+      margin: 0 auto 15px; /* Center the block */
+    }
+    .compare-subtitle {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: #6e6e73;
+      max-width: 800px;
+      margin: 0 auto; /* Center the block itself within the centered text parents */
+      line-height: 1.4;
+    }
+
+    /* Section Divider */
+    .compare-section-divider {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #ededed;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .compare-section-divider span {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    /* Comparison Content */
+    .compare-content-section {
+      background: #fafafa;
+      border-radius: 20px;
+      padding: 40px;
+      min-height: 800px;
+      position: relative;
+    }
+
+    .compare-content-section.is-loading::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(250, 250, 250, 0.5);
+      z-index: 5;
+    }
+
+    .compare-table-wrapper {
+      overflow-x: visible;
+    }
+
+    /* Base Grid System */
+    .compare-grid-row {
+      display: grid;
+      grid-template-columns: 200px repeat(3, 1fr);
+      gap: 0 20px;
+    }
+    .compare-grid-row > div {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ededed;
+      padding: 16px 0;
+    }
+    .grid-label {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #00151e;
+      justify-content: flex-start;
+    }
+    .grid-value {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      color: #000;
+      justify-content: flex-start;
+      min-height: 50px;
+      padding-left: 10px !important;
+    }
+
+    .selector-row,
+    .card-row {
+      border-bottom: none !important;
+    }
+    .card-row {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 100px; /* Perfect for desktop */
+      z-index: 100;
+      background-color: #fafafa;
+      padding-top: 20px !important;
+      border-bottom: 2px solid #ededed !important;
+      transition: all 0.2s;
+    }
+    .selector-row > div,
+    .card-row > div {
+      border-bottom: none !important;
+      padding: 0 0 20px !important;
+      align-items: flex-start !important;
+    }
+
+    .product-select-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      background: #fff;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236E6E73' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+    }
+
+    .empty-compare-slot {
+      width: 100%;
+      height: 280px;
+      border: 2px dashed #e5e5e5;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      gap: 15px;
+      cursor: pointer;
+    }
+
+    .hide-desktop {
+      display: none;
+    }
+
+    /* Responsive Adjustments */
+    @media screen and (max-width: 1024px) {
+      .compare-page-container {
+        padding: 20px 40px 60px;
+      }
+      .compare-title {
+        font-size: 48px;
+      }
+      .compare-grid-row {
+        grid-template-columns: 150px repeat(3, 1fr);
+      }
+    }
+
+    /* Mobile Styles */
+    @media screen and (max-width: 768px) {
+      .compare-page-container {
+        padding: 20px 15px !important; /* Restore nice spacing */
+        overflow-x: visible !important; /* Must be visible for sticky */
+      }
+      .compare-title {
+        font-size: 36px !important;
+        margin: 0 0 10px 0;
+        text-align: left !important; /* Force Left on Mobile */
+      }
+      .compare-subtitle {
+        font-size: 14px;
+        margin: 0 0 30px 0;
+        text-align: left !important; /* Force Left on Mobile */
+      }
+      .compare-header {
+        margin-bottom: 30px;
+        text-align: left !important; /* Force Left on Mobile */
+      }
+      .compare-content-section {
+        padding: 0 !important;
+        background: #fff !important;
+        border-radius: 0 !important;
+      }
+      .compare-section-divider {
+        margin: 0 0 20px; /* Indent divider text */
+      }
+
+      /* Full width split for selectors and cards */
+      .selector-row,
+      .card-row {
+        display: flex !important;
+        justify-content: center; /* Center the two cards */
+        gap: 15px !important; /* Slightly larger gap for "nice spacing" */
+        padding: 0 !important;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .selector-row > div,
+      .card-row > div {
+        flex: 0 0 169px; /* Force width */
+        width: 169px !important;
+        max-width: 169px !important;
+      }
+
+      /* Native Sticky at top for mobile */
+      .card-row {
+        top: 0px !important;
+        position: -webkit-sticky !important;
+        position: sticky !important;
+      }
+
+      .selector-row > .grid-label,
+      .card-row > .grid-label {
+        display: none !important;
+      }
+
+      /* Base specs row split */
+      .compare-grid-row.spec-row {
+        grid-template-columns: 80px repeat(2, 1fr) !important;
+        gap: 5px;
+        padding: 10px 15px; /* Specs need padding */
+      }
+
+      .slot-3 {
+        display: none !important;
+      }
+
+      .grid-label {
+        font-size: 13px;
+        padding: 10px 0 !important;
+      }
+      .grid-value {
+        font-size: 13px;
+        color: #777;
+        justify-content: center;
+        text-align: center;
+        padding-left: 0 !important;
+      }
+
+      .product-select-input {
+        font-size: 13px;
+        padding: 10px 25px 10px 10px;
+        width: 100%;
+      }
+
+      .empty-compare-slot {
+        height: 262px; /* Match card height */
+      }
+    }
+  {%- endstyle -%}
+
+  <div class="compare-page-container">
+    <div class="compare-breadcrumb">
+      <a href="/">Menu</a>
+      <span class="separator">
+        <svg width="6" height="10" viewBox="0 0 6 10" fill="none">
+          <path d="M1 9L5 5L1 1" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span>Compare</span>
+    </div>
+
+    <div class="compare-header">
+      <h1 class="compare-title">Compare Your Favorite Scooters</h1>
+      <p class="compare-subtitle">Compare and contract your scooters before purchase quickly for free</p>
+    </div>
+
+    <div class="compare-content-section" id="CompareSection-{{ section.id }}">
+      {%- liquid
+        # More robust collection lookup
+        assign sc_col = collections['e-scooters']
+        if sc_col != empty
+          assign scooters = sc_col.products
+        else
+          assign scooters = collections.all.products | where: 'type', 'Electric Scooter'
+        endif
+
+        # Default empty handles. Initial state will be populated via JS or Section Rendering API
+        assign s1_h = ''
+        assign s2_h = ''
+        assign s3_h = ''
+
+        assign handles = s1_h | append: ',' | append: s2_h | append: ',' | append: s3_h | split: ','
+      -%}
+
+      <div class="compare-table-wrapper" id="CompareTableWrapper">
+        <!-- SELECTORS -->
+        <div class="compare-grid-row selector-row">
+          <div class="grid-label"></div>
+          {%- for i in (1..3) -%}
+            {%- assign h = handles[forloop.index0] -%}
+            <div class="slot-{{ i }}">
+              <select class="product-select-input" id="SlotSelect-{{ i }}" onchange="updateCompareSlot(this, {{ i }})">
+                <option value="">Select a scooter...</option>
+                {%- for p in scooters -%}
+                  <option
+                    value="{{ p.handle }}"
+                    {% if p.handle == h %}
+                      selected
+                    {% endif %}
+                  >
+                    {{ p.title }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <!-- CARDS -->
+        <div class="compare-grid-row card-row" id="OriginalCardRow">
+          <div class="grid-label"></div>
+          {%- for i in (1..3) -%}
+            {%- assign h = handles[forloop.index0] -%}
+            {%- assign p = all_products[h] -%}
+            <div class="slot-{{ i }}">
+              {%- if p != empty -%}
+                {% render 'compare-card', product: p, slot_index: forloop.index %}
+              {%- else -%}
+                <div class="empty-compare-slot" onclick="document.getElementById('SlotSelect-{{ i }}').focus();">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: #000; color: #fff; display: flex; align-items: center; justify-content: center;">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <line x1="12" y1="19" x2="12" y2="5"></line>
+                      <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                  </div>
+                  <span style="font-family: 'Work Sans', sans-serif; font-size: 14px; color: #6E6E73;"
+                    >Add Product</span
+                  >
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <!-- SPEC ROWS -->
+        {%- assign spec_labels = 'Speed,Range,Power,Battery,Charging Time,Tire Size,Braking System,Water Rating,Payload,Climb ability,Connectivity,Display,Weight,Horn / Bell,Turn Signals,Rear Shocks,Front Shocks'
+          | split: ','
+        -%}
+        {%- for label in spec_labels -%}
+          <div class="compare-grid-row spec-row">
+            <div class="grid-label">{{ label }}</div>
+            {%- for i in (1..3) -%}
+              {%- liquid
+                assign h = handles[forloop.index0]
+                assign p = all_products[h]
+                assign val = '-'
+                if p != empty
+                  case label
+                    when 'Speed'
+                      assign val = p.metafields.specification.max_speed | default: p.metafields.custom.top_speed | default: '-'
+                    when 'Range'
+                      assign val = p.metafields.specification.max_range | default: p.metafields.custom.range | default: '-'
+                    when 'Power'
+                      assign val = p.metafields.specification.power | default: p.metafields.custom.rated_power | default: '-'
+                    when 'Battery'
+                      assign val = p.metafields.specification.battery | default: p.metafields.custom.battery_capacity | default: '-'
+                    when 'Charging Time'
+                      assign val = p.metafields.specification.charge_time | default: p.metafields.custom.charging_time | default: '-'
+                    when 'Tire Size'
+                      assign val = p.metafields.specification.tires | default: p.metafields.custom.tire_size | default: '-'
+                    when 'Braking System'
+                      assign val = p.metafields.specification.brakes | default: p.metafields.custom.braking_system | default: '-'
+                    when 'Water Rating'
+                      assign val = p.metafields.specification.water_rating | default: p.metafields.custom.ip_rating | default: p.metafields.custom.water_resistance | default: '-'
+                    when 'Payload'
+                      assign val = p.metafields.specification.max_load | default: p.metafields.custom.max_load | default: '-'
+                    when 'Climb ability'
+                      assign val = p.metafields.specification.climb_ability | default: p.metafields.custom.climb_ability | default: '-'
+                    when 'Connectivity'
+                      assign val = p.metafields.specification.connectivity | default: p.metafields.custom.connectivity | default: 'Yes'
+                    when 'Display'
+                      assign val = p.metafields.specification.display | default: p.metafields.custom.display | default: 'Yes'
+                    when 'Weight'
+                      assign val = p.metafields.specification.weight | default: p.metafields.custom.scooter_weight | default: '-'
+                    when 'Horn / Bell'
+                      assign val = p.metafields.custom.horn_or_bell | default: '-'
+                    when 'Turn Signals'
+                      assign val = p.metafields.custom.turn_signals | default: '-'
+                    when 'Rear Shocks'
+                      assign val = p.metafields.custom.rear_shocks | default: '-'
+                    when 'Front Shocks'
+                      assign val = p.metafields.custom.front_shocks | default: '-'
+                  endcase
+                endif
+              -%}
+              <div class="grid-value slot-{{ i }}">{{ val }}</div>
+            {%- endfor -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateCompareTable(urlParams) {
+      const section = document.getElementById('CompareSection-{{ section.id }}');
+      section.classList.add('is-loading');
+
+      const fetchUrl = new URL(window.location.pathname, window.location.origin);
+      fetchUrl.searchParams.set('section_id', '{{ section.id }}');
+      urlParams.forEach((value, key) => fetchUrl.searchParams.set(key, value));
+      fetchUrl.searchParams.set('_', new Date().getTime());
+
+      fetch(fetchUrl.toString())
+        .then((response) => response.text())
+        .then((html) => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newWrapper = doc.getElementById('CompareTableWrapper');
+          if (newWrapper) {
+            document.getElementById('CompareTableWrapper').innerHTML = newWrapper.innerHTML;
+          }
+          section.classList.remove('is-loading');
+        })
+        .catch((err) => {
+          console.error('Failed to initialize compare table:', err);
+          section.classList.remove('is-loading');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('slot1') || urlParams.has('slot2') || urlParams.has('slot3')) {
+        updateCompareTable(urlParams);
+      }
+    });
+
+    function updateCompareSlot(select, slotIndex) {
+      const handle = select.value;
+      const url = new URL(window.location.href);
+      if (handle) url.searchParams.set(`slot${slotIndex}`, handle);
+      else url.searchParams.delete(`slot${slotIndex}`);
+
+      window.history.pushState({}, '', url.toString());
+      updateCompareTable(url.searchParams);
+    }
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom Compare",
+  "settings": [],
+  "presets": [{ "name": "Custom Compare" }]
+}
+{% endschema %}

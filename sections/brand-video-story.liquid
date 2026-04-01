@@ -1,0 +1,333 @@
+{%- liquid
+  assign story_text = section.settings.story_text | default: collection.metafields.custom.story_text.value | default: collection.metafields.custom.story_text
+  assign story_video = section.settings.video
+  assign story_video_url = section.settings.video_url
+  if story_video == blank
+    assign story_video = collection.metafields.custom.story_video.value
+  endif
+  assign brand_handle = collection.title | handleize
+
+  # Fallback Stories based on research
+  if story_text == blank
+    case brand_handle
+      when 'segway-ninebot'
+        assign story_text = "A global leader in micro-mobility since 1999, Segway-Ninebot specializes in smart, eco-friendly transportation. Their mission of 'Simply Moving' continues to redefine short-distance travel through advanced technology."
+      when 'inmotion', 'inmotionworld'
+        assign story_text = 'Founded in 2012, Inmotion is a pioneer in sensor-controlled vehicles. With over a decade of R&D expertise, they focus on crafting high-performance electric scooters that bring joy to daily urban travel.'
+      when 'kaabo'
+        assign story_text = 'Since 2013, Kaabo has dominated the market with high-power scooters like the Wolf Warrior series. They are dedicated to engineering high-strength, thrill-seeking mobility solutions for riders worldwide.'
+      when 'circooter'
+        assign story_text = "Circooter builds the 'Two-Wheel SUV' of personal mobility—powerful enough for rugged trails yet refined for commutes. Their community of 50,000+ riders trusts their durable designs for every adventure."
+      when 'blutron'
+        assign story_text = 'Standing for clean power, Blutron delivers energy-sustainable mobility solutions. They focus on the perfect balance of performance and design, helping reduce carbon footprints with every high-range ride.'
+      when 'iscooter'
+        assign story_text = 'Since 2015, iScooter has worked to make urban travel smarter and greener. Their silent, zero-emission scooters help riders reclaim their space in the city, advocating for sustainable, conscious living.'
+      when 'isinwheel'
+        assign story_text = "Under the motto 'Move Smart, Move Fun,' Isinwheel specializes in premium personal transportation. Established in 2018, they prioritize rider safety and cutting-edge tech in every rigorously tested device."
+    endcase
+  endif
+
+  assign section_heading = section.settings.heading | replace: '[brand]', collection.title
+-%}
+
+{{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+{{ 'video-section.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .brand-video-story-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 60px;
+    align-items: stretch;
+    position: relative;
+  }
+
+  .brand-video-story-content {
+    flex: 1;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.85); /* More opaque for better readability */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+    z-index: 2;
+  }
+
+  .brand-video-story-media {
+    flex: 1.5;
+    min-width: 350px;
+    min-height: 320px; /* Reduced min-height for desktop */
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    z-index: 1;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .brand-video-story-media:hover {
+    transform: scale(1.02);
+  }
+
+  .brand-video-story-title {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #000;
+  }
+
+  .brand-video-story-text {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px; /* Reduced font size */
+    line-height: 1.6;
+    color: #333;
+  }
+
+  /* Video player custom styles */
+  .video-story-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute; /* Match media class behavior */
+    top: 0;
+    left: 0;
+  }
+
+  .brand-story-accent {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, #d72308 0%, #ff4d4d 100%);
+    opacity: 0.15;
+    border-radius: 50%;
+    filter: blur(50px);
+    z-index: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .brand-video-story-wrapper {
+      gap: 30px;
+    }
+    .brand-video-story-content {
+      padding: 40px;
+    }
+    .brand-video-story-media {
+      min-height: 350px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .brand-video-story-wrapper {
+      flex-direction: column-reverse; /* Media on top */
+      gap: 0;
+    }
+    .brand-video-story-content {
+      margin-top: 0; /* Removed negative margin to prevent clipping */
+      min-width: auto;
+      border-radius: 0 0 20px 20px;
+      padding: 40px 25px;
+      box-shadow: none;
+      border-top: none;
+    }
+    .brand-video-story-media {
+      min-height: 200px; /* Further reduced height on mobile */
+      border-radius: 20px 20px 0 0;
+      box-shadow: none;
+    }
+    .brand-video-story-title {
+      font-size: 32px;
+    }
+    .brand-video-story-text {
+      font-size: 16px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding isolate">
+    <div class="brand-video-story-wrapper">
+      <div class="brand-story-accent"></div>
+
+      <div class="brand-video-story-content scroll-trigger animate--slide-in">
+        <h2 class="brand-video-story-title {{ section.settings.heading_size }}">
+          {{ section_heading }}
+        </h2>
+        <div class="brand-video-story-text rte">
+          {%- if story_text != blank -%}
+            {{ story_text | newline_to_br }}
+          {%- else -%}
+            <p>
+              Welcome to the world of {{ collection.title }}. We are dedicated to providing the best in electric
+              mobility, combining performance with sustainability.
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="brand-video-story-media scroll-trigger animate--slide-in">
+        {%- if story_video != blank -%}
+          {{-
+            story_video
+            | video_tag:
+              image_size: '1100x',
+              autoplay: false,
+              loop: true,
+              controls: true,
+              muted: false,
+              class: 'video-story-player'
+          -}}
+        {%- elsif story_video_url != blank -%}
+          {%- liquid
+            assign video_id = ''
+            if story_video_url contains 'youtube.com/watch'
+              assign video_id = story_video_url | split: 'v=' | last | split: '&' | first
+              assign embed_url = 'https://www.youtube.com/embed/' | append: video_id | append: '?autoplay=0&controls=1&rel=0'
+            elsif story_video_url contains 'youtu.be/'
+              assign video_id = story_video_url | split: 'youtu.be/' | last | split: '?' | first
+              assign embed_url = 'https://www.youtube.com/embed/' | append: video_id | append: '?autoplay=0&controls=1&rel=0'
+            elsif story_video_url contains 'vimeo.com/'
+              assign video_id = story_video_url | split: 'vimeo.com/' | last | split: '?' | first
+              assign embed_url = 'https://player.vimeo.com/video/' | append: video_id | append: '?autoplay=0&controls=1'
+            else
+              assign embed_url = story_video_url
+            endif
+          -%}
+          <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: inherit;">
+            <iframe
+              src="{{ embed_url }}"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: inherit;"
+              title="{{ section_heading }} video"
+            ></iframe>
+          </div>
+        {%- else -%}
+          <div
+            class="video-section__media deferred-media gradient global-media-settings media"
+            style="padding-bottom: 56.25%;"
+          >
+            {{ 'hero-apparel-3' | placeholder_svg_tag: 'placeholder-svg placeholder shadow--none' }}
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #666; text-align: center; width: 80%;">
+              <p style="font-size: 14px; opacity: 0.8;">
+                No video yet — upload one using the <strong>"Upload Video"</strong> or <strong>"Video URL"</strong> settings in this section.
+              </p>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Brand Video Story",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The [brand] Story",
+      "info": "Use [brand] to dynamically insert the brand name"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    {
+      "type": "header",
+      "content": "Brand Content"
+    },
+    {
+      "type": "richtext",
+      "id": "story_text",
+      "label": "Brand Story Text",
+      "info": "Optional — override the automatic brand story text. Leave blank to use the default or collection metafield."
+    },
+    {
+      "type": "header",
+      "content": "Brand Video"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Upload Video",
+      "info": "Upload a video directly from your Shopify files. This takes priority over the URL below."
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL (YouTube or Vimeo)",
+      "info": "Paste a YouTube or Vimeo link here if you do not want to upload a video directly.",
+      "placeholder": "https://www.youtube.com/watch?v=..."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Video Story"
+    }
+  ]
+}
+{% endschema %}

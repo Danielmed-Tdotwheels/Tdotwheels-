@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "cart-items": {
+      "type": "main-cart-items",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "more_products": {
+      "type": "custom-banner-grid",
+      "settings": {
+        "title": "Accessories",
+        "see_all_link": "/collections/accessories",
+        "banner_image": "shopify://shop_images/before-footer-banner.png",
+        "banner_title": "Rider Essentials",
+        "banner_subtitle": "Safe, stylish, and built to perform.",
+        "button_text": "Buy Now",
+        "button_link": "/collections/accessories",
+        "collection": "accessories"
+      }
+    }
+  },
+  "order": [
+    "cart-items",
+    "more_products"
+  ]
+}

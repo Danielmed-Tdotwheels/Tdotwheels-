@@ -1,0 +1,401 @@
+{% comment %}
+  Add-on Popup Snippet
+  Usage: {% render 'addon-popup', main_product: product %}
+{% endcomment %}
+
+<div id="AddonPopupOverlay" class="addon-popup-overlay">
+  <div class="addon-popup-container">
+    <button class="addon-popup-close" onclick="closeAddonPopup()">
+      <img src="{{ 'addon-close-icon.png' | asset_url }}" alt="Close" class="close-icon-img" width="31" height="31">
+    </button>
+
+    <h2 class="addon-popup-title">Add Ons</h2>
+
+    <div class="addon-products-list">
+      {%- liquid
+        assign accessory_collection = collections.accessories
+        if accessory_collection == blank
+          assign accessory_collection = collections['scooter-accessories']
+        endif
+        if accessory_collection == blank
+          assign accessory_collection = collections['ebike-accessories']
+        endif
+
+        # Fallback to all products filtered by type if collection is still blank
+        if accessory_collection == blank
+          assign addon_products = collections.all.products | where: 'type', 'Accessories'
+        else
+          assign addon_products = accessory_collection.products
+        endif
+
+        # Filter out the main product from the addons list
+        assign addon_products_filtered = '' | split: ','
+        for p in addon_products
+          if p.id != main_product.id
+            assign p_array = p | sort
+            assign addon_products_filtered = addon_products_filtered | concat: p_array
+          endif
+        endfor
+        assign addon_products = addon_products_filtered
+      -%}
+
+      {%- if addon_products.size > 0 -%}
+        {%- for addon in addon_products limit: 3 -%}
+          <div class="addon-item-wrapper" data-variant-id="{{ addon.first_available_variant.id }}">
+            <div class="addon-checkbox-wrapper">
+              <input
+                type="checkbox"
+                id="Addon-{{ addon.id }}"
+                class="addon-checkbox"
+                onchange="toggleAddonSelection(this)"
+              >
+              <label for="Addon-{{ addon.id }}" class="addon-checkbox-label"></label>
+            </div>
+
+            <div class="addon-product-card">
+              <div class="addon-product-image">
+                {%- if addon.featured_media -%}
+                  <img
+                    src="{{ addon.featured_media | image_url: width: 300 }}"
+                    alt="{{ addon.title }}"
+                    width="144"
+                    height="80"
+                  >
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag }}
+                {%- endif -%}
+              </div>
+
+              <div class="addon-product-info">
+                <h3 class="addon-product-title">{{ addon.title }}</h3>
+                <p class="addon-product-subtitle">
+                  Best for {{ main_product.title }}
+                  <span class="brand-highlight">{{ main_product.vendor }}</span>
+                </p>
+                <div class="addon-product-price">
+                  <span class="price-current">{{ addon.price | money }}</span>
+                  {%- if addon.compare_at_price > addon.price -%}
+                    <span class="price-compare">{{ addon.compare_at_price | money }}</span>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <p class="no-addons">No accessories available at the moment.</p>
+      {%- endif -%}
+    </div>
+
+    <div class="addon-popup-footer">
+      <button class="btn-skip" onclick="proceedToCart(false)">Skip & Proceed</button>
+      <button class="btn-add-addons" onclick="proceedToCart(true)">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .addon-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(126, 126, 126, 0.8); /* #7e7e7e with opacity */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+  }
+
+  .addon-popup-container {
+    width: 613px;
+    height: 597px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .addon-popup-close {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .close-icon-img {
+    width: 31px;
+    height: 31px;
+    display: block;
+  }
+
+  .addon-popup-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 25px 0;
+    color: #000;
+  }
+
+  .addon-products-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-right: 5px;
+  }
+
+  .addon-item-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .addon-checkbox-wrapper {
+    margin-top: 10px;
+    position: relative;
+  }
+
+  .addon-checkbox {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .addon-checkbox-label {
+    display: block;
+    width: 22px;
+    height: 22px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .addon-checkbox:checked + .addon-checkbox-label {
+    background-color: #d72e08;
+    border-color: #d72e08;
+  }
+
+  .addon-checkbox:checked + .addon-checkbox-label::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .addon-product-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    background: #fff;
+    transition: all 0.3s;
+  }
+
+  .addon-product-image {
+    width: 144px;
+    height: 80px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .addon-product-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .addon-product-info {
+    flex: 1;
+  }
+
+  .addon-product-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: #000;
+    line-height: 1.2;
+  }
+
+  .addon-product-subtitle {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    color: #777;
+    margin: 0 0 8px 0;
+  }
+
+  .brand-highlight {
+    color: #d72e08;
+    text-decoration: underline;
+  }
+
+  .addon-product-price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .price-current {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #d72e08;
+  }
+
+  .price-compare {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+  }
+
+  .addon-popup-footer {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+  }
+
+  .btn-skip,
+  .btn-add-addons {
+    flex: 1;
+    height: 52px;
+    border-radius: 50px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-skip {
+    background: #fff;
+    color: #000;
+    border: 1px solid #e5e5e5;
+  }
+
+  .btn-add-addons {
+    background: #d72e08;
+    color: #fff;
+    border: none;
+  }
+
+  /* Mobile Responsive Styles */
+  @media screen and (max-width: 768px) {
+    .addon-popup-container {
+      width: 341px;
+      height: 522px;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .addon-popup-close {
+      top: -12px;
+      right: -12px;
+    }
+
+    .close-icon-img {
+      width: 25px !important;
+      height: 25px !important;
+    }
+
+    .addon-popup-title {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .addon-products-list {
+      gap: 12px;
+    }
+
+    .addon-item-wrapper {
+      gap: 10px;
+    }
+
+    .addon-checkbox-label {
+      width: 18px;
+      height: 18px;
+    }
+
+    .addon-checkbox:checked + .addon-checkbox-label::after {
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 8px;
+    }
+
+    .addon-product-card {
+      padding: 8px;
+      gap: 10px;
+    }
+
+    .addon-product-image {
+      width: 100px;
+      height: 56px;
+    }
+
+    .addon-product-title {
+      font-size: 14px;
+    }
+
+    .addon-product-subtitle {
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .price-current {
+      font-size: 14px;
+    }
+
+    .price-compare {
+      font-size: 11px;
+    }
+
+    .addon-popup-footer {
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn-skip,
+    .btn-add-addons {
+      height: 44px;
+      font-size: 14px;
+    }
+  }
+</style>

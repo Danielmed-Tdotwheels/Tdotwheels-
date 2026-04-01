@@ -1,0 +1,306 @@
+<style>
+  .shop-category-section {
+    max-width: 1440px;
+    margin: 60px auto;
+    padding: 0 60px;
+  }
+  .shop-category-header {
+    text-align: left;
+    margin-bottom: 30px;
+  }
+  .shop-category-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+  }
+
+  .category-tabs-nav {
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 5px;
+  }
+  .category-tabs-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background: rgba(0, 0, 0, 0.03);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .category-tab-btn:hover {
+    background: #f0f0f0;
+  }
+  .category-tab-btn.is-active {
+    background: #d72308;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(215, 35, 8, 0.2);
+  }
+  .category-tab-btn.is-active img,
+  .category-tab-btn.is-active svg {
+    filter: brightness(0) invert(1);
+  }
+  .tab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+  }
+  .tab-icon svg,
+  .tab-icon img {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  .category-products-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--desktop-columns, 4), 1fr);
+    gap: 24px;
+    display: none;
+  }
+  .category-products-grid.is-active {
+    display: grid;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .category-products-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media screen and (max-width: 900px) {
+    .category-products-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .shop-category-section {
+      padding: 0 20px;
+      margin: 40px auto;
+    }
+    .shop-category-title {
+      font-size: 24px;
+    }
+    .category-tabs-nav {
+      margin-bottom: 25px;
+    }
+    .category-tab-btn {
+      padding: 8px 18px;
+      font-size: 13px;
+    }
+    .category-products-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+    /* Hide items after the 4th one on mobile to show only 2 rows */
+    .category-products-grid > :nth-of-type(n + 5) {
+      display: none;
+    }
+  }
+</style>
+
+<div
+  class="shop-category-section"
+  id="ShopByCategory-{{ section.id }}"
+  style="--desktop-columns: {{ section.settings.columns_desktop }};"
+>
+  <div class="shop-category-header">
+    <h2 class="shop-category-title">{{ section.settings.title }}</h2>
+  </div>
+
+  <div class="category-tabs-nav">
+    {%- for block in section.blocks -%}
+      <button
+        class="category-tab-btn{% if forloop.first %} is-active{% endif %}"
+        data-tab="cat-tab-{{ forloop.index }}"
+        {{ block.shopify_attributes }}
+      >
+        <span class="tab-icon">
+          {%- if block.settings.icon != blank -%}
+            <img
+              src="{{ block.settings.icon | image_url: width: 40 }}"
+              alt="{{ block.settings.tab_title }}"
+              width="18"
+              height="18"
+            >
+          {%- else -%}
+            {%- liquid
+              assign tab_title = block.settings.tab_title | downcase
+            -%}
+            {%- if tab_title contains 'bike' -%}
+              <img
+                src="{{ 'ebike-icon.png' | asset_url }}"
+                alt="E-Bikes"
+                width="18"
+                height="18"
+                style="display:block; object-fit:contain;"
+              >
+            {%- elsif tab_title contains 'scooter' -%}
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19,15c-1.66,0-3,1.34-3,3s1.34,3,3,3s3-1.34,3-3S20.66,15,19,15z M19,19c-0.55,0-1-0.45-1-1s0.45-1,1-1s1,0.45,1,1S19.55,19,19,19z M5,15c-1.66,0-3,1.34-3,3s1.34,3,3,3s3-1.34,3-3S6.66,15,5,15z M5,19c-0.55,0-1-0.45-1-1s0.45-1,1-1s1,0.45,1,1S5.55,19,5,19z M13.5,10V3h-3v2h1v5h-2L7,18h2.11L11,13h5v2h2v-5H13.5z"/>
+              </svg>
+            {%- elsif tab_title contains 'car' -%}
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H6.5c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5zM7.5 13c-.83 0-1.5.67-1.5 1.5S6.67 16 7.5 16s1.5-.67 1.5-1.5S8.33 13 7.5 13zm9 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/>
+              </svg>
+            {%- elsif tab_title contains 'access' -%}
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.5-3.5 3.5-7.5-7.5 3.5-3.5 7.5zM12 10.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/>
+              </svg>
+            {%- elsif tab_title contains 'sport' or tab_title contains 'fit' -%}
+              <img
+                src="{{ 'fit-icon.png' | asset_url }}"
+                alt="Sports and Fitness"
+                width="18"
+                height="18"
+                style="display:block; object-fit:contain;"
+              >
+            {%- else -%}
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            {%- endif -%}
+          {%- endif -%}
+        </span>
+        <span>{{ block.settings.tab_title }}</span>
+      </button>
+    {%- endfor -%}
+  </div>
+
+  <div class="category-content">
+    {%- for block in section.blocks -%}
+      <div class="category-products-grid{% if forloop.first %} is-active{% endif %}" id="cat-tab-{{ forloop.index }}">
+        {%- if block.settings.collection != blank -%}
+          {%- for product in block.settings.collection.products limit: section.settings.products_to_show -%}
+            {% render 'custom-product-card', product: product %}
+          {%- endfor -%}
+        {%- else -%}
+          <p style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px 0;">
+            Select a collection to display products.
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('ShopByCategory-{{ section.id }}');
+    if (!container) return;
+
+    const tabs = container.querySelectorAll('.category-tab-btn');
+    const grids = container.querySelectorAll('.category-products-grid');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab');
+
+        // Update tabs
+        tabs.forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+
+        // Update grids
+        grids.forEach((g) => {
+          g.classList.remove('is-active');
+          if (g.id === target) {
+            g.classList.add('is-active');
+          }
+        });
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Shop By Category",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Shop By Categories"
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Number of columns on desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 24,
+      "step": 1,
+      "label": "Maximum products to show",
+      "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title",
+          "default": "Category"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Custom Icon (Optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop By Category",
+      "blocks": [
+        { "type": "category", "settings": { "tab_title": "E-scooters", "collection": "e-scooters" } },
+        { "type": "category", "settings": { "tab_title": "E-Bikes", "collection": "electric-bikes" } },
+        { "type": "category", "settings": { "tab_title": "Ride on Cars", "collection": "ride-on-cars" } },
+        { "type": "category", "settings": { "tab_title": "Accessories", "collection": "accessories" } },
+        { "type": "category", "settings": { "tab_title": "Sports and Fitness", "collection": "sports-and-fitness" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

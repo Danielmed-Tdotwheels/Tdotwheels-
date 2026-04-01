@@ -1,0 +1,183 @@
+{% schema %}
+{
+  "name": "Warranty Products Grid",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Protected Products"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Browse our range of products covered by our comprehensive warranty policy."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "label": "Maximum products to show per category",
+      "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection_row",
+      "name": "Collection Category",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "title_override",
+          "label": "Title Override (Optional)",
+          "info": "Defaults to collection title if left blank"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Warranty Products Grid"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .warranty-products-{{ section.id }} {
+    padding: 80px 5%;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .warranty-products-header-{{ section.id }} {
+    max-width: 800px;
+    margin: 0 auto 60px;
+    text-align: center;
+  }
+
+  .warranty-products-heading-{{ section.id }} {
+    font-family: 'Lato', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+  }
+
+  .warranty-products-subheading-{{ section.id }} {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 18px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .category-row-{{ section.id }} {
+    margin-bottom: 80px;
+  }
+
+  .category-row-{{ section.id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .category-title-{{ section.id }} {
+    font-family: 'Lato', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+    color: #000;
+  }
+
+  .products-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+  }
+
+  .empty-category-{{ section.id }} {
+    padding: 40px;
+    background: #fdfdfd;
+    border: 1px dashed #eee;
+    border-radius: 12px;
+    text-align: center;
+    color: #999;
+    font-family: 'Work Sans', sans-serif;
+  }
+
+  @media (max-width: 1200px) {
+    .products-grid-{{ section.id }} {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .products-grid-{{ section.id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .warranty-products-{{ section.id }} {
+      padding: 60px 20px;
+    }
+    .warranty-products-heading-{{ section.id }} {
+      font-size: 28px;
+    }
+  }
+</style>
+
+<div class="warranty-products-{{ section.id }}">
+  <div class="warranty-products-header-{{ section.id }}">
+    <h2 class="warranty-products-heading-{{ section.id }}">{{ section.settings.heading }}</h2>
+    <p class="warranty-products-subheading-{{ section.id }}">{{ section.settings.subheading }}</p>
+  </div>
+
+  <div class="categories-container-{{ section.id }}">
+    {% for block in section.blocks %}
+      {%- liquid
+        assign collection = block.settings.collection
+        assign title = block.settings.title_override | default: collection.title
+      -%}
+      
+      <div class="category-row-{{ section.id }}" {{ block.shopify_attributes }}>
+        <h3 class="category-title-{{ section.id }}">{{ title }}</h3>
+        
+        <div class="products-grid-{{ section.id }}">
+          {%- liquid
+            assign products_shown = 0
+            assign max_products = section.settings.products_to_show
+          -%}
+          
+          {%- if collection != blank -%}
+            {%- for product in collection.products -%}
+              {%- if product.metafields.custom.has_warranty == true or product.metafields.custom.has_warranty.value == true -%}
+                {%- if products_shown < max_products -%}
+                  {% render 'custom-product-card', product: product %}
+                  {%- assign products_shown = products_shown | plus: 1 -%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+            
+            {%- if products_shown == 0 -%}
+               <p class="empty-category-{{ section.id }}">No products with active warranty found in this category.</p>
+            {%- endif -%}
+          {%- else -%}
+             <p class="empty-category-{{ section.id }}">Please select a collection in the theme editor.</p>
+          {%- endif -%}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>

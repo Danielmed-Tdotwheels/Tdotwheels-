@@ -1,0 +1,304 @@
+{% comment %}
+  Refined Warranty Cards - Premium UI & Animations Redesign
+{% endcomment %}
+
+{% style %}
+  .premium-cards-section-{{ section.id }} {
+    padding: {{ section.settings.padding_top }}px 5% {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.section_bg | default: '#0a0a0a' }};
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative background glow */
+  .premium-cards-section-{{ section.id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, {{ section.settings.accent_color | color_modify: 'alpha', 0.05 | default: 'rgba(215, 35, 8, 0.05)' }} 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .premium-cards-container-{{ section.id }} {
+    max-width: {{ section.settings.max_width | default: '1200' }}px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .premium-card-{{ section.id }} {
+    background: {{ section.settings.card_bg | default: '#f8f8f8' }};
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 48px 40px;
+    border-radius: 28px;
+    border: 1px solid {{ section.settings.card_border | default: '#eeeeee' }};
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    transform: translateY(30px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .premium-card-{{ section.id }}.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .premium-card-{{ section.id }}:hover {
+    background: {{ section.settings.card_bg_hover | default: 'rgba(255, 255, 255, 0.05)' }};
+    border-color: var(--accent-color);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    transform: translateY(-8px);
+  }
+
+  .icon-wrapper-{{ section.id }} {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    color: var(--accent-color);
+    transition: all 0.4s ease;
+  }
+
+  .premium-card-{{ section.id }}:hover .icon-wrapper-{{ section.id }} {
+    background: var(--accent-color);
+    color: #fff;
+    transform: scale(1.05) rotate(5deg);
+  }
+
+  .icon-wrapper-{{ section.id }} img,
+  .icon-wrapper-{{ section.id }} svg {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .card-title-{{ section.id }} {
+    font-family: 'Lato', sans-serif;
+    font-size: clamp(20px, 1.5vw, 24px);
+    font-weight: 900;
+    margin-bottom: 12px;
+    color: {{ section.settings.heading_color | default: '#111111' }};
+    letter-spacing: -0.5px;
+  }
+
+  .card-text-{{ section.id }} {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: {{ section.settings.text_color | default: '#444444' }};
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .premium-cards-container-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+    .premium-cards-section-{{ section.id }} {
+      padding: 60px 24px;
+    }
+    .premium-card-{{ section.id }} {
+      padding: 40px 30px;
+    }
+  }
+{% endstyle %}
+
+<div class="premium-cards-section-{{ section.id }}" id="WarrantyCards-{{ section.id }}">
+  <div class="premium-cards-container-{{ section.id }}">
+    {%- for block in section.blocks -%}
+      <div 
+        class="premium-card-{{ section.id }} reveal-stagger" 
+        style="--accent-color: {{ block.settings.accent_color | default: '#d72308' }};"
+        {{ block.shopify_attributes }}
+      >
+        <div class="icon-wrapper-{{ section.id }}">
+          {%- if block.settings.icon != blank -%}
+             <img 
+                src="{{ block.settings.icon | image_url: width: 120 }}" 
+                alt="{{ block.settings.title | escape }}" 
+                loading="lazy"
+                width="{{ block.settings.icon.width }}"
+                height="{{ block.settings.icon.height }}"
+              >
+          {%- else -%}
+             {%- if block.settings.title contains 'New' -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7L9 18l-5-5"></path></svg>
+             {%- else -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+             {%- endif -%}
+          {%- endif -%}
+        </div>
+        <h3 class="card-title-{{ section.id }}">{{ block.settings.title }}</h3>
+        <div class="card-text-{{ section.id }}">{{ block.settings.description }}</div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const cards = entry.target.querySelectorAll('.reveal-stagger');
+          cards.forEach((card, index) => {
+            setTimeout(() => {
+              card.classList.add('active');
+            }, index * 100);
+          });
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const container = document.getElementById('WarrantyCards-{{ section.id }}');
+    if (container) observer.observe(container);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Warranty Cards Premium",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "label": "Container Max Width",
+      "default": 1200
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#444444"
+    },
+    {
+      "type": "header",
+      "content": "Card Styles"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card Background",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_hover",
+      "label": "Card Background (Hover)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Card Border Color",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Default Accent Color",
+      "default": "#d72308"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "policy_card",
+      "name": "Warranty Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Custom Icon (Optional)"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "title",
+          "label": "Card Title",
+          "default": "Shield Protection"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Card Description",
+          "default": "<p>A comprehensive 1-year warranty covering all manufacturing defects.</p>"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Card Accent Color",
+          "default": "#d72308"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Warranty Cards Premium",
+      "blocks": [
+        { "type": "policy_card", "settings": { "title": "New Products" } },
+        { "type": "policy_card", "settings": { "title": "Refurbished Units" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

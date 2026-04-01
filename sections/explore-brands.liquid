@@ -1,0 +1,179 @@
+{% comment %} Custom Brands Section {% endcomment %}
+<style>
+  .explore-brands-section {
+    padding: 40px 0;
+    background-color: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .explore-brands-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 60px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .explore-brands-title {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #999999;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin: 0;
+  }
+  .explore-brands-list {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-grow: 1;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  .explore-brands-list::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  .explore-brand-item {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+  }
+  .explore-brand-item:hover {
+    opacity: 0.7;
+  }
+  .explore-brand-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+  }
+  .explore-brand-item:hover .explore-brand-img {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+  .explore-brand-placeholder {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ddd;
+    border: 2px dashed #eee;
+    padding: 10px 20px;
+    border-radius: 4px;
+    user-select: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    .explore-brands-section {
+      padding: 15px 0; /* Significantly reduced from default 40px 0 */
+    }
+    .explore-brands-container {
+      flex-direction: column;
+      padding: 0 20px; /* Reduced vertical padding */
+      gap: 15px; /* Reduced gap */
+      text-align: center;
+    }
+    .explore-brands-list {
+      width: 100%;
+      justify-content: flex-start;
+      padding-bottom: 0px;
+    }
+    .explore-brand-img {
+      height: 25px; /* Slightly smaller for mobile */
+    }
+  }
+</style>
+
+<div class="explore-brands-section" id="Brands-{{ section.id }}">
+  <div class="explore-brands-container">
+    {% if section.settings.title != blank %}
+      <h2 class="explore-brands-title">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    <div class="explore-brands-list">
+      {% for block in section.blocks %}
+        <div class="explore-brand-item" {{ block.shopify_attributes }}>
+          {% if block.settings.link != blank %}
+            <a href="{{ block.settings.link }}">
+          {% endif %}
+
+          {% if block.settings.image != blank %}
+            <img
+              src="{{ block.settings.image | image_url: width: 300 }}"
+              alt="{{ block.settings.image.alt | default: 'Brand Logo' }}"
+              class="explore-brand-img"
+              loading="lazy"
+              width="150"
+              height="40"
+            >
+          {% else %}
+            {%- liquid
+              assign logo_filename = 'brand-logo-' | append: forloop.index | append: '.svg'
+            -%}
+            <img
+              src="{{ logo_filename | asset_url }}"
+              alt="Brand Logo placeholder"
+              class="explore-brand-img"
+              width="150"
+              height="40"
+              loading="lazy"
+            >
+          {% endif %}
+
+          {% if block.settings.link != blank %}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Explore by Brands",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "EXPLORE BY BRANDS"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Brand Logo"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Brand Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Explore by Brands",
+      "blocks": [
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}

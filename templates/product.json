@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "custom_product_main": {
+      "type": "custom-product-main",
+      "settings": {}
+    }
+  },
+  "order": [
+    "custom_product_main"
+  ]
+}

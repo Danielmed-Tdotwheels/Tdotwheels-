@@ -1,0 +1,299 @@
+<style>
+  .banner-grid-section {
+    max-width: 1440px;
+    margin: 60px auto;
+    padding: 0 60px;
+  }
+  .banner-grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  .banner-grid-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+  }
+  .banner-grid-see-all {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    color: #d72308;
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  .banner-grid-promo {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    background-color: #f0f0f0;
+  }
+  .banner-grid-promo-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .banner-grid-promo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%);
+    z-index: 2;
+  }
+  .banner-grid-promo-content {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 60px;
+    color: #ffffff;
+    max-width: 600px;
+  }
+  .banner-grid-promo-heading {
+    font-family: 'Lato', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+  }
+  .banner-grid-promo-subheading {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 30px;
+    opacity: 0.9;
+  }
+  .banner-grid-promo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #d72308;
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: fit-content;
+  }
+  .banner-grid-promo-btn:hover {
+    background: #b01c06;
+    transform: translateX(5px);
+  }
+  .banner-grid-promo-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .banner-grid-products {
+    display: grid;
+    grid-template-columns: repeat(var(--desktop-columns, 4), 1fr);
+    gap: 24px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .banner-grid-section {
+      padding: 0 30px;
+    }
+    .banner-grid-products {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .banner-grid-section {
+      padding: 0 20px;
+      margin: 40px auto;
+    }
+    .banner-grid-title {
+      font-size: 24px;
+    }
+    .banner-grid-promo {
+      height: 300px;
+      margin-bottom: 25px;
+    }
+    .banner-grid-promo-content {
+      padding: 0 20px;
+    }
+    .banner-grid-promo-heading {
+      font-size: 24px;
+    }
+    .banner-grid-promo-subheading {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .banner-grid-products {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+  }
+</style>
+
+<div
+  class="banner-grid-section"
+  id="BannerGrid-{{ section.id }}"
+  style="--desktop-columns: {{ section.settings.columns_desktop }};"
+>
+  <div class="banner-grid-header">
+    <h2 class="banner-grid-title">{{ section.settings.title }}</h2>
+    {%- if section.settings.see_all_link != blank -%}
+      <a href="{{ section.settings.see_all_link }}" class="banner-grid-see-all">See All</a>
+    {%- endif -%}
+  </div>
+
+  {%- unless template.name == 'cart' -%}
+    <div class="banner-grid-promo">
+      {%- if section.settings.banner_image != blank -%}
+        <img
+          src="{{ section.settings.banner_image | image_url: width: 2000 }}"
+          alt="{{ section.settings.banner_title | escape }}"
+          class="banner-grid-promo-bg"
+          loading="lazy"
+          width="{{ section.settings.banner_image.width }}"
+          height="{{ section.settings.banner_image.height }}"
+        >
+      {%- else -%}
+        {{ 'lifestyle-2' | placeholder_svg_tag: 'banner-grid-promo-bg placeholder-svg' }}
+      {%- endif -%}
+
+      <div class="banner-grid-promo-overlay"></div>
+
+      <div class="banner-grid-promo-content">
+        <h3 class="banner-grid-promo-heading">{{ section.settings.banner_title }}</h3>
+        <p class="banner-grid-promo-subheading">{{ section.settings.banner_subtitle }}</p>
+        {%- if section.settings.button_link != blank -%}
+          <a href="{{ section.settings.button_link }}" class="banner-grid-promo-btn">
+            {{ section.settings.button_text }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endunless -%}
+
+  <div class="banner-grid-products">
+    {%- if section.settings.collection != blank -%}
+      {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
+        {% render 'custom-product-card', product: product %}
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..4) -%}
+        <div class="custom-product-card placeholder">
+          <div class="custom-card-image-container">
+            {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+          <div class="custom-card-info">
+            <h3 class="custom-card-title">Sample Product {{ i }}</h3>
+            <div class="custom-card-price-row">
+              <span class="custom-card-price">$99.00</span>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Banner & Product Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "More Products"
+    },
+    {
+      "type": "url",
+      "id": "see_all_link",
+      "label": "See All Link"
+    },
+    {
+      "type": "header",
+      "content": "Promo Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner Background"
+    },
+    {
+      "type": "text",
+      "id": "banner_title",
+      "label": "Banner Title",
+      "default": "Inmotion S1F Electric Scooter"
+    },
+    {
+      "type": "text",
+      "id": "banner_subtitle",
+      "label": "Banner Subtitle",
+      "default": "Performance and Portability"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Explore More"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Product Grid"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Number of columns on desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 24,
+      "step": 1,
+      "label": "Maximum products to show",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner & Product Grid"
+    }
+  ]
+}
+{% endschema %}

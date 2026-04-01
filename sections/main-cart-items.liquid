@@ -1,0 +1,281 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart-items.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+{{ 'custom-cart.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
+
+<script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+
+<cart-items class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}">
+  <div class="page-width">
+    <div class="cart-header">
+      <h1 class="title title--primary">
+        Cart <span class="cart-count">({{ cart.item_count }} items)</span>
+      </h1>
+    </div>
+
+    <div class="cart__warnings">
+      <h1 class="cart__empty-text">{{ 'sections.cart.empty' | t }}</h1>
+      <a href="{{ routes.all_products_collection_url }}" class="button">
+        {{ 'general.continue_shopping' | t }}
+      </a>
+    </div>
+
+    <form action="{{ routes.cart_url }}" class="cart__contents critical-hidden" method="post" id="cart">
+      <div class="cart-layout">
+        {%- comment -%} ITEMS COLUMN {%- endcomment -%}
+        <div class="cart-items-container" id="main-cart-items" data-id="{{ section.id }}">
+          <div class="js-contents">
+            {%- if cart != empty -%}
+              {%- for item in cart.items -%}
+                <div class="cart-item-card" id="CartItem-{{ item.index | plus: 1 }}">
+                  <div class="cart-item-image-box">
+                    {% if item.image %}
+                      <a href="{{ item.url }}">
+                        <img
+                          src="{{ item.image | image_url: width: 400 }}"
+                          alt="{{ item.image.alt | escape }}"
+                          loading="lazy"
+                          width="185"
+                          height="151"
+                        >
+                      </a>
+                    {% endif %}
+                  </div>
+
+                  <div class="cart-item-details-box">
+                    <a href="{{ item.url }}" class="cart-item-title">{{ item.product.title | escape }}</a>
+
+                    <div class="cart-item-price-row">
+                      {%- liquid
+                        assign item_on_sale = false
+                        if item.variant.compare_at_price > item.final_price or item.original_price > item.final_price
+                          assign item_on_sale = true
+                        endif
+                      -%}
+                      <span class="cart-item-price{% if item_on_sale %} sale{% endif %}">{{ item.final_price | money }}</span>
+                      {%- if item.variant.compare_at_price > item.final_price -%}
+                        <span class="cart-item-old-price">{{ item.variant.compare_at_price | money }}</span>
+                      {%- elsif item.original_price > item.final_price -%}
+                        <span class="cart-item-old-price">{{ item.original_price | money }}</span>
+                      {%- endif -%}
+                    </div>
+
+                    {%- if item.variant.inventory_policy == 'continue' and item.variant.inventory_quantity <= 0 -%}
+                      <div class="cart-item-badge pre-order">Pre-Order Item</div>
+                    {%- endif -%}
+
+                    <div class="cart-item-controls">
+                      <quantity-input class="cart-item-quantity-selector">
+                        <span class="cart-item-quantity-label mobile-only">Quantity:</span>
+                        <button class="cart-item-quantity-btn" name="minus" type="button">-</button>
+                        <input
+                          class="cart-item-quantity-input"
+                          data-quantity-variant-id="{{ item.variant.id }}"
+                          type="number"
+                          name="updates[]"
+                          value="{{ item.quantity }}"
+                          data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
+                          min="{{ item.quantity_rule.min | default: 0 }}"
+                          {% if item.quantity_rule.max != null %}
+                            max="{{ item.quantity_rule.max }}"
+                          {% endif %}
+                          step="{{ item.quantity_rule.increment | default: 1 }}"
+                          data-index="{{ item.index | plus: 1 }}"
+                          id="Quantity-{{ item.index | plus: 1 }}"
+                          aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}"
+                        >
+                        <button class="cart-item-quantity-btn" name="plus" type="button">+</button>
+                      </quantity-input>
+
+                      <cart-remove-button
+                        id="Remove-{{ item.index | plus: 1 }}"
+                        data-index="{{ item.index | plus: 1 }}"
+                      >
+                        <a href="{{ item.url_to_remove }}" class="cart-item-remove" aria-label="Remove">
+                          <span class="svg-wrapper">
+                            {{- 'icon-remove.svg' | inline_asset_content -}}
+                          </span>
+                        </a>
+                      </cart-remove-button>
+
+                      <div class="loading__spinner hidden">
+                        <svg
+                          aria-hidden="true"
+                          focusable="false"
+                          class="spinner"
+                          viewBox="0 0 66 66"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- comment -%} SUMMARY COLUMN {%- endcomment -%}
+        <div class="cart-summary-card" id="main-cart-footer" data-id="{{ section.id }}">
+          <div class="js-contents">
+            <h2 class="cart-summary-title">Order Summary</h2>
+
+            <div class="cart-summary-row">
+              <span>Subtotal</span>
+              <span>{{ cart.total_price | money }}</span>
+            </div>
+
+            <div class="cart-summary-row">
+              <span>Shipping</span>
+              <span>$0.00</span>
+            </div>
+
+            <div class="cart-summary-row">
+              <span>Estimated Tax</span>
+              <span>Pending</span>
+            </div>
+
+            <div class="cart-summary-row total">
+              <span>Total</span>
+              <span class="cart-summary-total-price">{{ cart.total_price | money }}</span>
+            </div>
+
+            <p class="cart-summary-tax-note">Tax calculated at checkout.</p>
+
+            <p class="cart-summary-installments">
+              {% assign installment_price = cart.total_price | divided_by: 4 %}
+              From {{ installment_price | money }}/mo at 0% APR with
+              <img
+                src="{{ 'design-payment-shop-installments.png' | asset_url }}"
+                width="63"
+                height="15"
+                style="vertical-align: middle; margin: 0 4px;"
+                alt="Shop Pay"
+              >
+              <a href="#">Check plans details</a>
+            </p>
+
+            <a
+              href="/cart?view=checkout"
+              id="checkout"
+              class="checkout-btn"
+              style="text-decoration: none; display: flex; align-items: center; justify-content: center;"
+            >
+              Checkout
+            </a>
+
+            <p class="secure-payments-note">100% Secure payments</p>
+
+            <div class="cart-summary-payment-logos">
+              <img src="{{ 'design-payment-amex.png' | asset_url }}" alt="Amex" loading="lazy" width="51" height="32">
+              <img
+                src="{{ 'design-payment-applepay.png' | asset_url }}"
+                alt="Apple Pay"
+                loading="lazy"
+                width="51"
+                height="32"
+              >
+              <img
+                src="{{ 'design-payment-diners.png' | asset_url }}"
+                alt="Diners"
+                loading="lazy"
+                width="51"
+                height="32"
+              >
+              <img
+                src="{{ 'design-payment-discover.png' | asset_url }}"
+                alt="Discover"
+                loading="lazy"
+                width="51"
+                height="32"
+              >
+              <img
+                src="{{ 'design-payment-mastercard.png' | asset_url }}"
+                alt="Mastercard"
+                loading="lazy"
+                width="51"
+                height="32"
+              >
+              <img
+                src="{{ 'design-payment-paypal.png' | asset_url }}"
+                alt="Paypal"
+                loading="lazy"
+                width="51"
+                height="32"
+              >
+              <img
+                src="{{ 'design-payment-shop.png' | asset_url }}"
+                alt="Shop Pay"
+                loading="lazy"
+                width="51"
+                height="32"
+              >
+              <img src="{{ 'design-payment-visa.png' | asset_url }}" alt="Visa" loading="lazy" width="51" height="32">
+              <img
+                src="{{ 'design-payment-googlepay.png' | asset_url }}"
+                alt="Google Pay"
+                loading="lazy"
+                width="51"
+                height="32"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="visually-hidden" id="cart-live-region-text" aria-live="polite" role="status"></p>
+      <p
+        class="visually-hidden"
+        id="shopping-cart-line-item-status"
+        aria-live="polite"
+        aria-hidden="true"
+        role="status"
+      >
+        {{ 'accessibility.loading' | t }}
+      </p>
+    </form>
+  </div>
+</cart-items>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-items.name",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

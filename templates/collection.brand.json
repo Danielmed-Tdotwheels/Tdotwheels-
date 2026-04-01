@@ -1,0 +1,66 @@
+{
+  "sections": {
+    "brand_hero": {
+      "type": "brand-hero",
+      "settings": {
+        "brand_name": "{{ collection.title }}",
+        "heading": "Ride Safe And Charge Safe",
+        "description": "Each model is built with safety-first features, durable materials, and intuitive controls—making secure."
+      }
+    },
+    "brand_categories": {
+      "type": "brand-categories",
+      "settings": {
+        "title": "Browse [brand] Collection"
+      },
+      "blocks": {
+        "ebike": {
+          "type": "category",
+          "settings": {
+            "label": "E-Bikes",
+            "heading": "Comfortable, Efficient, And Built For Everyday Mobility"
+          }
+        },
+        "parts": {
+          "type": "category",
+          "settings": {
+            "label": "Parts",
+            "heading": "Essential Gear And Replacement Parts"
+          }
+        }
+      },
+      "block_order": [
+        "ebike",
+        "parts"
+      ]
+    },
+    "popular_products": {
+      "type": "brand-featured-grid",
+      "settings": {
+        "title": "Popular [brand]",
+        "count": 4
+      }
+    },
+    "lifestyle_feature": {
+      "type": "brand-lifestyle-feature",
+      "settings": {
+        "heading": "HD Display Everything At A Glance",
+        "description": "Stay informed with the generous sleek LCD screen displaying speed, battery life, and ride mode at a glance."
+      }
+    },
+    "featured_products": {
+      "type": "brand-featured-grid",
+      "settings": {
+        "title": "Featured Products",
+        "count": 4
+      }
+    }
+  },
+  "order": [
+    "brand_hero",
+    "brand_categories",
+    "popular_products",
+    "lifestyle_feature",
+    "featured_products"
+  ]
+}

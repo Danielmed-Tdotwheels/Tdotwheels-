@@ -1,0 +1,299 @@
+{% comment %}
+  Segway Ninebot Unbind Service - Globo Product Options Section
+  This section renders the Globo Product Options widget for the unbind service product.
+  It is only shown when assigned via the product.segway-unbind template.
+{% endcomment %}
+
+<style>
+  .segway-options-section {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 40px 50px;
+    box-sizing: border-box;
+    font-family: 'Work Sans', sans-serif;
+  }
+
+  .segway-options-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  /* ---- Left Column: Product Summary ---- */
+  .segway-product-summary {
+    background: #f9f9f9;
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .segway-product-summary .product-image-wrap {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #eee;
+  }
+
+  .segway-product-summary .product-image-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .segway-product-summary .summary-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+  }
+
+  .segway-product-summary .summary-price {
+    font-size: 28px;
+    font-weight: 700;
+    color: #d72e08;
+  }
+
+  .segway-product-summary .summary-desc {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  .segway-trust-badges {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .segway-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+  }
+
+  .segway-trust-badge svg {
+    width: 16px;
+    height: 16px;
+    stroke: #d72e08;
+    flex-shrink: 0;
+  }
+
+  /* ---- Right Column: Globo Widget Area ---- */
+  .segway-options-widget-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .segway-options-header {
+    border-bottom: 2px solid #d72e08;
+    padding-bottom: 14px;
+    margin-bottom: 4px;
+  }
+
+  .segway-options-header h2 {
+    font-family: 'Lato', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 6px 0;
+  }
+
+  .segway-options-header p {
+    font-size: 14px;
+    color: #777;
+    margin: 0;
+  }
+
+  /* Globo widget container */
+  .segway-globo-wrapper {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 16px;
+    padding: 24px;
+    min-height: 100px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+  }
+
+  /* Override Globo widget styles to match our design */
+  .segway-globo-wrapper .gpo-option__label {
+    font-family: 'Work Sans', sans-serif !important;
+    font-size: 14px !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+  }
+
+  .segway-globo-wrapper .gpo-option__title {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #111 !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* Step indicator */
+  .segway-step-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff8f7;
+    border: 1px solid #fde0da;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #d72e08;
+    font-weight: 500;
+  }
+
+  .segway-step-info svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    stroke: #d72e08;
+  }
+
+  /* ---- Mobile Responsive ---- */
+  @media (max-width: 900px) {
+    .segway-options-section {
+      padding: 30px 20px;
+    }
+
+    .segway-options-inner {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .segway-product-summary {
+      padding: 20px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .segway-options-section {
+      padding: 20px 16px;
+    }
+
+    .segway-product-summary .summary-title {
+      font-size: 18px;
+    }
+
+    .segway-options-header h2 {
+      font-size: 20px;
+    }
+  }
+</style>
+
+<section class="segway-options-section">
+  <div class="segway-options-inner">
+
+    <!-- Left: Product Summary -->
+    <div class="segway-product-summary">
+      {%- if product.featured_media -%}
+        <div class="product-image-wrap">
+          <img
+            src="{{ product.featured_media | image_url: width: 600 }}"
+            alt="{{ product.featured_media.alt | escape }}"
+            width="{{ product.featured_media.width }}"
+            height="{{ product.featured_media.height }}"
+            loading="lazy"
+          >
+        </div>
+      {%- endif -%}
+
+      <p class="summary-title">{{ product.title }}</p>
+      <p class="summary-price">{{ product.price | money }}</p>
+
+      {%- if product.description != blank -%}
+        <p class="summary-desc">{{ product.description | strip_html | truncatewords: 40 }}</p>
+      {%- endif -%}
+
+      <div class="segway-trust-badges">
+        <div class="segway-trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Secure Checkout
+        </div>
+        <div class="segway-trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Warranty Included
+        </div>
+        <div class="segway-trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>
+          Free Shipping
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Globo Widget -->
+    <div class="segway-options-widget-col">
+      <div class="segway-options-header">
+        <h2>{{ section.settings.widget_title }}</h2>
+        <p>{{ section.settings.widget_subtitle }}</p>
+      </div>
+
+      <div class="segway-step-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Select your preferred service option below, then add to cart
+      </div>
+
+      <!-- Globo Product Options injection target -->
+      <div class="segway-globo-wrapper">
+        <div id="globoOptionsTop" class="globo-product-options" data-product-id="{{ product.id }}"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Segway Globo Options",
+  "settings": [
+    {
+      "type": "text",
+      "id": "widget_title",
+      "label": "Widget Section Title",
+      "default": "Customize Your Service"
+    },
+    {
+      "type": "text",
+      "id": "widget_subtitle",
+      "label": "Widget Subtitle",
+      "default": "Select the options that apply to your Segway Ninebot scooter"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Segway Globo Options"
+    }
+  ]
+}
+{% endschema %}

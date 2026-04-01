@@ -1,0 +1,238 @@
+{% comment %}
+  Dynamic About Brand Section
+  Renders brand details and products based on the page context.
+{% endcomment %}
+
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+<style>
+  .about-brand-hero {
+    position: relative;
+    width: 100%;
+    height: 383px;
+    overflow: hidden;
+    background-color: #000;
+  }
+
+  .about-brand-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    opacity: 0.8;
+  }
+
+  .about-brand-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+    z-index: 2;
+  }
+
+  .about-brand-hero-content {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .about-brand-breadcrumb {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #fff;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .about-brand-breadcrumb a {
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .about-brand-breadcrumb a:hover {
+    opacity: 1;
+  }
+
+  .about-brand-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    margin: 0 0 15px 0;
+    line-height: 1.1;
+    color: #fff;
+  }
+
+  .about-brand-tagline {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #fff;
+    opacity: 0.95;
+    max-width: 700px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .about-brand-description {
+    margin-bottom: 40px;
+    max-width: 900px;
+  }
+
+  .about-brand-grid-header {
+    margin-bottom: 30px;
+  }
+
+  .about-brand-no-products {
+    padding: 40px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    text-align: center;
+    color: #666;
+  }
+
+  @media screen and (max-width: 991px) {
+    .about-brand-title {
+      font-size: 48px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .about-brand-hero {
+      height: 236px;
+    }
+    .about-brand-breadcrumb {
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .about-brand-title {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    .about-brand-tagline {
+      font-size: 14px;
+    }
+    .about-brand-description {
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+  }
+</style>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: 36px;
+    padding-bottom: 36px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: 60px;
+      padding-bottom: 60px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign hero_image = collection.metafields.custom.hero_image.value
+  if hero_image == blank and collection.image != blank
+    assign hero_image = collection.image
+  endif
+
+  assign hero_tagline = collection.metafields.custom.hero_tagline.value | default: collection.metafields.custom.hero_tagline
+-%}
+
+<div class="about-brand-container">
+  <section class="about-brand-hero">
+    {%- if hero_image != blank -%}
+      <img
+        src="{{ hero_image | image_url: width: 2800 }}"
+        alt="{{ collection.title | escape }}"
+        class="about-brand-hero-bg"
+        width="{{ hero_image.width }}"
+        height="{{ hero_image.height }}"
+        loading="eager"
+      >
+    {%- else -%}
+      <img
+        src="{{ 'brand-bg.jpg' | asset_url }}"
+        alt="{{ collection.title | escape }}"
+        class="about-brand-hero-bg"
+        width="1920"
+        height="383"
+        loading="eager"
+      >
+    {%- endif -%}
+    <div class="about-brand-hero-overlay"></div>
+    <div class="about-brand-hero-content page-width">
+      <div class="about-brand-breadcrumb">
+        <a href="/pages/brands">Shop by Brands</a>
+        <span style="margin: 0 8px;">&gt;</span>
+        <span>{{ collection.title }}</span>
+      </div>
+      <h1 class="about-brand-title">{{ collection.title }}</h1>
+      {%- if hero_tagline != blank -%}
+        <div class="about-brand-tagline">{{ hero_tagline }}</div>
+      {%- endif -%}
+    </div>
+  </section>
+
+  <section class="about-brand-main page-width section-{{ section.id }}-padding">
+    {%- if collection.description != blank -%}
+      <div class="about-brand-description">
+        {{ collection.description }}
+      </div>
+    {%- endif -%}
+
+    <div class="about-brand-products">
+      <div class="about-brand-grid-header">
+        <h2 class="about-brand-grid-title h2">Shop {{ collection.title }} Products</h2>
+      </div>
+
+      {%- if collection.products_count > 0 -%}
+        <ul id="product-grid" class="grid product-grid grid--2-col-tablet-down grid--4-col-desktop list-unstyled">
+          {%- for product in collection.products limit: 12 -%}
+            <li class="grid__item">
+              {% render 'custom-product-card', product: product %}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <div class="about-brand-no-products">
+          <p>No products found for this brand yet. Stay tuned!</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "About Brand Main",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand Page Settings"
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Brand Main"
+    }
+  ]
+}
+{% endschema %}

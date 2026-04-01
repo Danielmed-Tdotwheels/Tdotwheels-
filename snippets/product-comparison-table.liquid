@@ -1,0 +1,219 @@
+{% comment %}
+  Product Comparison Table for Tdot Wheels
+  Renders a side-by-side comparison of the current product and list of products from product.metafields.specification.comparison_list
+{% endcomment %}
+
+{%- liquid
+  assign comparison_products = product.metafields.specification.comparison_list.value
+  assign specs = 'max_speed,max_range,power,weight,max_load,tire_info,climb_ability,braking,lighting,water_rate' | split: ','
+-%}
+
+{%- if comparison_products != blank -%}
+  <div class="product-comparison-container">
+    <h3 class="product-comparison-title">Comparison Table</h3>
+    <div class="comparison-scroll-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Features</th>
+            <th class="current-product-col">
+              <div class="comparison-product-header">
+                <img
+                  src="{{ product.featured_media | image_url: width: 200 }}"
+                  alt="{{ product.title }}"
+                  width="100"
+                  height="100"
+                  loading="lazy"
+                >
+                <span class="product-title">{{ product.title }}</span>
+                <span class="current-badge">This Product</span>
+              </div>
+            </th>
+            {%- for comp_product in comparison_products -%}
+              <th>
+                <div class="comparison-product-header">
+                  <a href="{{ comp_product.url }}">
+                    <img
+                      src="{{ comp_product.featured_media | image_url: width: 200 }}"
+                      alt="{{ comp_product.title }}"
+                      width="100"
+                      height="100"
+                      loading="lazy"
+                    >
+                    <span class="product-title">{{ comp_product.title }}</span>
+                  </a>
+                  <span class="product-price">{{ comp_product.price | money }}</span>
+                </div>
+              </th>
+            {%- endfor -%}
+          </tr>
+        </thead>
+        <tbody>
+          {%- for spec_key in specs -%}
+            {%- liquid
+              assign label = spec_key | replace: '_', ' ' | capitalize
+
+              assign current_val = product.metafields.specification[spec_key]
+              if current_val == blank
+                case spec_key
+                  when 'max_speed'
+                    assign current_val = product.metafields.custom.top_speed
+                  when 'max_range'
+                    assign current_val = product.metafields.custom.range
+                  when 'power'
+                    assign current_val = product.metafields.custom.rated_power
+                  when 'weight'
+                    assign current_val = product.metafields.custom.scooter_weight
+                  when 'max_load'
+                    assign current_val = product.metafields.custom.max_payload
+                  when 'water_rate'
+                    assign current_val = product.metafields.custom.water_resistance
+                endcase
+              endif
+            -%}
+            <tr>
+              <td class="feature-label">{{ label }}</td>
+              <td class="current-product-val">{{ current_val | default: '-' }}</td>
+              {%- for comp_product in comparison_products -%}
+                {%- liquid
+                  assign comp_val = comp_product.metafields.specification[spec_key]
+                  if comp_val == blank
+                    case spec_key
+                      when 'max_speed'
+                        assign comp_val = comp_product.metafields.custom.top_speed
+                      when 'max_range'
+                        assign comp_val = comp_product.metafields.custom.range
+                      when 'power'
+                        assign comp_val = comp_product.metafields.custom.rated_power
+                      when 'weight'
+                        assign comp_val = comp_product.metafields.custom.scooter_weight
+                      when 'max_load'
+                        assign comp_val = comp_product.metafields.custom.max_payload
+                      when 'water_rate'
+                        assign comp_val = comp_product.metafields.custom.water_resistance
+                    endcase
+                  endif
+                -%}
+                <td>{{ comp_val | default: '-' }}</td>
+              {%- endfor -%}
+            </tr>
+          {%- endfor -%}
+          {%- comment -%} Price Row {%- endcomment -%}
+          <tr>
+            <td class="feature-label">Price</td>
+            <td class="current-product-val">
+              <strong>{{ product.price | money }}</strong>
+            </td>
+            {%- for comp_product in comparison_products -%}
+              <td>
+                <strong>{{ comp_product.price | money }}</strong>
+              </td>
+            {%- endfor -%}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+{%- endif -%}
+
+<style>
+  .product-comparison-container {
+    margin: 60px 0;
+    overflow: hidden;
+  }
+  .product-comparison-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .comparison-scroll-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+  }
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    min-width: 600px;
+  }
+  .comparison-table th,
+  .comparison-table td {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    border-right: 1px solid rgba(0, 0, 0, 0.04);
+  }
+  .comparison-table th:last-child,
+  .comparison-table td:last-child {
+    border-right: none;
+  }
+  .comparison-table thead th {
+    background: #fdfdfd;
+    vertical-align: top;
+  }
+  .feature-label {
+    text-align: left !important;
+    font-weight: 600;
+    color: #666;
+    background: #fafafa;
+    width: 150px;
+  }
+  .comparison-product-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .comparison-product-header img {
+    max-height: 100px;
+    object-fit: contain;
+    margin-bottom: 5px;
+  }
+  .comparison-product-header .product-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+    height: 40px;
+    overflow: hidden;
+  }
+  .comparison-product-header .product-price {
+    color: #d72308;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .current-product-col {
+    background: #fff9f8 !important;
+  }
+  .current-product-val {
+    background: #fff9f8 !important;
+    font-weight: 600;
+  }
+  .current-badge {
+    padding: 3px 10px;
+    background: #d72308;
+    color: #fff;
+    font-size: 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  @media screen and (max-width: 768px) {
+    .comparison-table th,
+    .comparison-table td {
+      padding: 12px;
+      font-size: 13px;
+    }
+    .comparison-product-header img {
+      max-height: 70px;
+      width: 70px;
+    }
+  }
+</style>

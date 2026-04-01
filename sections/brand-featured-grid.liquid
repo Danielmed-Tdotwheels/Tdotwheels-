@@ -1,0 +1,96 @@
+{% comment %}
+  Brand Featured Collection - Row style for Landing Page
+{% endcomment %}
+
+<style>
+  .brand-featured-section {
+    width: 100%;
+    max-width: 1440px;
+    margin: 60px auto;
+    padding: 0 60px;
+    box-sizing: border-box;
+  }
+
+  .brand-featured-header {
+    margin-bottom: 30px;
+  }
+
+  .brand-featured-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+  }
+
+  .brand-featured-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .brand-featured-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .brand-featured-section {
+      padding: 0 20px;
+      margin: 40px auto;
+    }
+    .brand-featured-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .brand-featured-title {
+      font-size: 24px;
+    }
+  }
+</style>
+
+<div class="brand-featured-section">
+  <div class="brand-featured-header">
+    <h2 class="brand-featured-title">
+      {%- if section.settings.title != blank -%}
+        {{ section.settings.title | replace: '[brand]', collection.title }}
+      {%- else -%}
+        Popular {{ collection.title }}
+      {%- endif -%}
+    </h2>
+  </div>
+
+  <div class="brand-featured-grid">
+    {%- assign collection_handle = section.settings.collection | default: collection.handle -%}
+    {%- assign featured_collection = collections[collection_handle] -%}
+
+    {%- if featured_collection.products_count > 0 -%}
+      {%- for product in featured_collection.products limit: section.settings.count -%}
+        {% render 'custom-product-card', product: product %}
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..4) -%}
+        <div class="dummy-card">
+          {{ 'product-' | append: i | placeholder_svg_tag }}
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Brand Featured Grid",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Section Title", "default": "Popular [brand]" },
+    { "type": "collection", "id": "collection", "label": "Collection (Leave blank for dynamic)" },
+    { "type": "range", "id": "count", "min": 4, "max": 12, "step": 4, "default": 4, "label": "Product Count" }
+  ],
+  "presets": [
+    {
+      "name": "Brand Featured Grid"
+    }
+  ]
+}
+{% endschema %}

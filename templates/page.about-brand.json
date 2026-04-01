@@ -1,0 +1,30 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-about-brand",
+      "settings": {
+      }
+    },
+    "lifestyle": {
+      "type": "brand-lifestyle-feature",
+      "settings": {
+      }
+    },
+    "video-testimonials": {
+      "type": "video-testimonial-carousel",
+      "settings": {
+        "subtitle": "CUSTOMER STORIES",
+        "title": "Real Riders, Real Reviews",
+        "description": "See what our customers have to say about their electric scooter experience.",
+        "scroll_speed": 30,
+        "card_width": 280,
+        "card_height": 480
+      }
+    }
+  },
+  "order": [
+    "main",
+    "lifestyle",
+    "video-testimonials"
+  ]
+}

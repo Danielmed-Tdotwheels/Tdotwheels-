@@ -1,0 +1,396 @@
+{% comment %} Video Testimonial Carousel - Infinite Scrolling Portrait Videos {% endcomment %}
+
+<style>
+  .video-testimonial-section {
+    padding: 60px 0;
+    overflow: hidden;
+    background: #f9f9f9;
+  }
+
+  .video-testimonial-header {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .video-testimonial-subtitle {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #d72308;
+    margin-bottom: 12px;
+  }
+
+  .video-testimonial-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+  }
+
+  .video-testimonial-description {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Carousel Track */
+  .video-carousel-track-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+  }
+
+  .video-carousel-track {
+    display: flex;
+    gap: 20px;
+    animation: scrollTestimonials {{ section.settings.scroll_speed }}s linear infinite;
+    width: max-content;
+  }
+
+  .video-carousel-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes scrollTestimonials {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Individual Video Card */
+  .video-testimonial-card {
+    flex-shrink: 0;
+    width: {{ section.settings.card_width }}px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .video-testimonial-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .video-testimonial-card video {
+    width: 100%;
+    height: {{ section.settings.card_height }}px;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Play button overlay */
+  .video-play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.15);
+    transition: background 0.3s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .video-testimonial-card.playing .video-play-overlay {
+    opacity: 0;
+  }
+
+  .video-play-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: transform 0.3s ease;
+  }
+
+  .video-play-btn svg {
+    width: 22px;
+    height: 22px;
+    margin-left: 3px;
+    fill: #1a1a1a;
+  }
+
+  .video-testimonial-card:hover .video-play-btn {
+    transform: scale(1.1);
+  }
+
+  /* Customer info overlay at the bottom */
+  .video-testimonial-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px 16px 16px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .video-testimonial-name {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+  }
+
+  .video-testimonial-location {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+  }
+
+  /* Star rating */
+  .video-testimonial-stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 6px;
+  }
+
+  .video-testimonial-stars svg {
+    width: 14px;
+    height: 14px;
+    fill: #FFD700;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .video-testimonial-section {
+      padding: 40px 0;
+    }
+    .video-testimonial-title {
+      font-size: 28px;
+    }
+    .video-testimonial-header {
+      margin-bottom: 30px;
+    }
+  }
+</style>
+
+<section class="video-testimonial-section">
+  <div class="video-testimonial-header">
+    {% if section.settings.subtitle != blank %}
+      <p class="video-testimonial-subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+    {% if section.settings.title != blank %}
+      <h2 class="video-testimonial-title">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.description != blank %}
+      <p class="video-testimonial-description">{{ section.settings.description }}</p>
+    {% endif %}
+  </div>
+
+  <div class="video-carousel-track-wrapper">
+    <div class="video-carousel-track" id="videoCarouselTrack-{{ section.id }}">
+      {%- comment -%} Render blocks twice for seamless infinite loop {%- endcomment -%}
+      {% for i in (1..2) %}
+        {% for block in section.blocks %}
+          <div class="video-testimonial-card" {{ block.shopify_attributes }} data-video-card>
+            {% if block.settings.video_url != blank %}
+              <video
+                src="{{ block.settings.video_url }}"
+                playsinline
+                muted
+                loop
+                preload="metadata"
+                poster="{% if block.settings.poster_image %}{{ block.settings.poster_image | image_url: width: 600 }}{% endif %}"
+              ></video>
+            {% elsif block.settings.video_file != null %}
+              {{
+                block.settings.video_file
+                | video_tag: playsinline: true, muted: true, loop: true, preload: 'metadata', image_size: '600x'
+              }}
+            {% else %}
+              <div style="width:100%;height:{{ section.settings.card_height }}px;background:#222;display:flex;align-items:center;justify-content:center;color:#666;font-size:13px;">
+                <span>Upload Video</span>
+              </div>
+            {% endif %}
+
+            <div class="video-play-overlay">
+              <div class="video-play-btn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="video-testimonial-info">
+              {% if block.settings.show_stars %}
+                <div class="video-testimonial-stars">
+                  {% for star in (1..5) %}
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              {% if block.settings.customer_name != blank %}
+                <p class="video-testimonial-name">{{ block.settings.customer_name }}</p>
+              {% endif %}
+              {% if block.settings.customer_location != blank %}
+                <p class="video-testimonial-location">{{ block.settings.customer_location }}</p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const cards = document.querySelectorAll('[data-video-card]');
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        const video = card.querySelector('video');
+        if (!video) return;
+
+        if (video.paused) {
+          // Pause all other videos first
+          document.querySelectorAll('[data-video-card] video').forEach(function (v) {
+            v.pause();
+            v.closest('[data-video-card]').classList.remove('playing');
+          });
+          video.muted = false;
+          video.play();
+          card.classList.add('playing');
+        } else {
+          video.pause();
+          video.muted = true;
+          card.classList.remove('playing');
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Video Testimonials",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "CUSTOMER STORIES"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Real Riders, Real Reviews"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "See what our customers have to say about their electric scooter experience."
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "s",
+      "label": "Scroll Speed"
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "min": 200,
+      "max": 400,
+      "step": 10,
+      "default": 280,
+      "unit": "px",
+      "label": "Card Width"
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "min": 350,
+      "max": 600,
+      "step": 10,
+      "default": 480,
+      "unit": "px",
+      "label": "Card Height"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video_testimonial",
+      "name": "Video Testimonial",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video_file",
+          "label": "Video File",
+          "info": "Upload a portrait video from Shopify Files"
+        },
+        {
+          "type": "url",
+          "id": "video_url",
+          "label": "External Video URL",
+          "info": "Or paste a direct .mp4 link (used if no file uploaded above)"
+        },
+        {
+          "type": "image_picker",
+          "id": "poster_image",
+          "label": "Poster / Thumbnail"
+        },
+        {
+          "type": "text",
+          "id": "customer_name",
+          "label": "Customer Name",
+          "default": "Happy Customer"
+        },
+        {
+          "type": "text",
+          "id": "customer_location",
+          "label": "Location",
+          "default": "Toronto, ON"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_stars",
+          "label": "Show Star Rating",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Testimonials"
+    }
+  ]
+}
+{% endschema %}

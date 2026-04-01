@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <circle cx="30" cy="30" r="25" fill="#000"/>
+  <path d="M20 30L30 40L45 20" stroke="#FFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="70" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="900" fill="#000">ELITE</text>
+</svg>

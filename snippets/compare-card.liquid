@@ -1,0 +1,125 @@
+{%- liquid
+  assign is_current = false
+  if slot_index == 1
+    assign is_current = true
+  endif
+-%}
+
+<div
+  class="compare-product-card"
+  style="width: 100%; height: 100%; background: #fff; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; box-sizing: border-box; position: relative;"
+>
+  {%- if is_current -%}
+    <div
+      class="current-item-badge"
+      style="position: absolute; top: 10px; right: 10px; background: #FFECEC; color: #D72308; font-family: 'Work Sans', sans-serif; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; z-index: 2;"
+    >
+      Current Item
+    </div>
+  {%- endif -%}
+
+  <div
+    class="compare-card-image-container"
+  >
+    <img
+      src="{{ product.featured_image | image_url: width: 400 }}"
+      class="compare-card-image"
+      alt="{{ product.title }}"
+      width="180"
+      height="140"
+      loading="lazy"
+    >
+  </div>
+
+  <div
+    class="compare-product-info"
+    style="width: 100%; text-align: left; flex: 1; display: flex; flex-direction: column; gap: 4px;"
+  >
+    <h3
+      class="compare-product-title"
+      style="font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 800; color: #000; margin: 0; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;"
+    >
+      {{ product.title }}
+    </h3>
+    <span
+      class="compare-product-price"
+      style="font-family: 'Lato', sans-serif; font-size: 16px; font-weight: 800; color: #D72308;"
+    >
+      {{ product.price | money_without_trailing_zeros }}
+    </span>
+  </div>
+
+  <form method="post" action="/cart/add" style="margin: 0; width: 100%;">
+    <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+    <button
+      type="submit"
+      class="compare-add-cart-btn"
+      style="width: auto; padding: 6px 14px; min-width: 100px; height: 38px; background: #fff; color: #000; border: 1px solid #E5E5E5; border-radius: 30px; font-family: 'Work Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);"
+    >
+      <span>Add to</span>
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+    </button>
+  </form>
+</div>
+
+<style>
+  .compare-add-cart-btn:hover {
+    background: #000 !important;
+    color: #fff !important;
+    border-color: #000 !important;
+  }
+  .compare-card-image-container {
+    width: 100%;
+    height: 140px; /* Desktop height */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    background: #f5f5f5;
+  }
+
+  .compare-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  @media screen and (max-width: 768px) {
+    .compare-card {
+      width: 169px !important;
+      height: auto !important;
+      min-height: 262px;
+    }
+    .compare-card-image-container {
+      width: 128px !important; /* Strictly 128px */
+      height: 128px !important; /* Strictly 128px */
+      margin: 0 auto 10px auto; /* Center the image container */
+      background: transparent !important;
+      border-radius: 0 !important;
+      border: none !important;
+    }
+    .compare-card-image {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+    }
+    .compare-card-title {
+      font-size: 14px !important;
+      margin-bottom: 5px !important;
+    }
+  }
+</style>

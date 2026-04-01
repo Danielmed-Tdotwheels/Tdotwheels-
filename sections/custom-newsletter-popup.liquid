@@ -1,0 +1,309 @@
+<style>
+  .newsletter-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20000;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .newsletter-popup-overlay.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .newsletter-popup-card {
+    width: 472px;
+    height: 620px;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 19px 20px;
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .newsletter-popup-overlay.active .newsletter-popup-card {
+    transform: scale(1);
+  }
+
+  .newsletter-popup-close {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 40px;
+    height: 40px;
+    background: #d72308;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 24px;
+    line-height: 1;
+    z-index: 1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .newsletter-popup-image {
+    width: 436px;
+    height: 251px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 25px;
+  }
+
+  .newsletter-popup-content {
+    text-align: center;
+    width: 100%;
+  }
+
+  .newsletter-popup-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 10px 0;
+    line-height: 1.1;
+  }
+
+  .newsletter-popup-subtitle {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    color: #6e6e73;
+    margin-bottom: 30px;
+  }
+
+  .newsletter-form-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .newsletter-popup-input {
+    width: 436px;
+    height: 48px;
+    border-radius: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0 20px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+
+  .newsletter-popup-input:focus {
+    border-color: #d72308;
+  }
+
+  .newsletter-popup-submit {
+    width: 436px;
+    height: 48px;
+    background: #d72308;
+    color: #ffffff;
+    border: none;
+    border-radius: 40px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .newsletter-popup-submit:hover {
+    background: #b01c06;
+  }
+
+  .newsletter-popup-legal {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    color: #6e6e73;
+    margin-top: 15px;
+    text-align: center;
+    line-height: 1.4;
+    padding: 0 20px;
+  }
+
+  .newsletter-popup-legal a {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  /* Responsive Adjustments */
+  @media screen and (max-width: 520px) {
+    .newsletter-popup-card {
+      width: 90%;
+      height: auto;
+      padding: 15px;
+    }
+    .newsletter-popup-image {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 436/251;
+    }
+    .newsletter-popup-input,
+    .newsletter-popup-submit {
+      width: 100%;
+    }
+    .newsletter-popup-title {
+      font-size: 24px;
+    }
+  }
+
+  .newsletter-success-msg {
+    font-family: 'Work Sans', sans-serif;
+    color: #28a745;
+    margin-top: 10px;
+    font-weight: 600;
+  }
+</style>
+
+<div class="newsletter-popup-overlay" id="NewsletterPopup">
+  <div class="newsletter-popup-card">
+    <button class="newsletter-popup-close" onclick="closeNewsletterPopup()">&times;</button>
+
+    {%- if section.settings.image != blank -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 800 }}"
+        class="newsletter-popup-image"
+        alt="Promotion"
+        width="436"
+        height="251"
+      >
+    {%- else -%}
+      <img
+        src="{{ 'custom-newsletter-promo.png' | asset_url }}"
+        class="newsletter-popup-image"
+        alt="Promotion"
+        width="436"
+        height="251"
+      >
+    {%- endif -%}
+
+    <div class="newsletter-popup-content">
+      <h2 class="newsletter-popup-title">{{ section.settings.title }}</h2>
+      <p class="newsletter-popup-subtitle">{{ section.settings.subtitle }}</p>
+
+      {%- form 'customer', class: 'newsletter-form-wrapper' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input
+          type="email"
+          name="contact[email]"
+          class="newsletter-popup-input"
+          placeholder="{{ section.settings.input_placeholder }}"
+          required
+        >
+        <button type="submit" class="newsletter-popup-submit">{{ section.settings.button_text }}</button>
+
+        {%- if form.posted_successfully? -%}
+          <p class="newsletter-success-msg">Thanks for signing up!</p>
+          <script>
+            window.addEventListener('load', () => {
+              // Keep visible if success
+              document.getElementById('NewsletterPopup').classList.add('active');
+            });
+          </script>
+        {%- endif -%}
+      {%- endform -%}
+
+      <div class="newsletter-popup-legal">
+        By signing up, you agree to T-Dot Wheels's
+        <a href="/policies/privacy-policy">Privacy Policy</a> and
+        <a href="/policies/terms-of-service">Terms of Use</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openNewsletterPopup() {
+    const popup = document.getElementById('NewsletterPopup');
+    if (popup) {
+      popup.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeNewsletterPopup() {
+    const popup = document.getElementById('NewsletterPopup');
+    if (popup) {
+      popup.classList.remove('active');
+      document.body.style.overflow = '';
+      localStorage.setItem('newsletter_popup_shown', 'true');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const popupShown = localStorage.getItem('newsletter_popup_shown');
+
+    // Check if we already showed it or if form just submitted successfully
+    const isSuccess = window.location.search.includes('customer_posted=true');
+
+    // Auto-popup is temporarily disabled per request
+    /*
+    if (!popupShown && !isSuccess) {
+      setTimeout(() => {
+        openNewsletterPopup();
+      }, 60000); // 60 seconds
+    }
+    */
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Newsletter Popup",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Popup Image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Enjoy Black Friday Discount by Signing Up"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Sign up to enjoy lot of Black Friday Discount"
+    },
+    {
+      "type": "text",
+      "id": "input_placeholder",
+      "label": "Input Placeholder",
+      "default": "Enter your email address"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Sign Up"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter Popup"
+    }
+  ]
+}
+{% endschema %}

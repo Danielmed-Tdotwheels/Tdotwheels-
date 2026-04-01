@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "custom-thank-you-view",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

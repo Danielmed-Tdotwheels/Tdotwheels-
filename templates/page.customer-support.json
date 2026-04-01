@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "support": {
+      "type": "custom-customer-support",
+      "settings": {}
+    },
+    "faq": {
+      "type": "custom-faq",
+      "settings": {}
+    }
+  },
+  "order": [
+    "support",
+    "faq"
+  ]
+}

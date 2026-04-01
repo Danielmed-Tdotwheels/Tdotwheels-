@@ -1,0 +1,179 @@
+{% comment %}
+  Product Specification Grid for Tdot Wheels
+  Renders a grid of technical specifications based on the 'specification' metafield namespace.
+{% endcomment %}
+
+<div class="product-spec-grid-container">
+  <h3 class="product-spec-title">Technical Specifications</h3>
+  <div class="product-spec-grid">
+    {%- liquid
+      assign specs = 'max_speed,max_range,power,tire_info,climb_ability,braking,water_rate,bells,shocks,app_connectivity,max_weight,lighting,max_load' | split: ','
+    -%}
+
+    {%- for spec_key in specs -%}
+      {%- liquid
+        assign spec_value = product.metafields.specification[spec_key]
+        if spec_value == blank
+          case spec_key
+            when 'max_speed'
+              assign spec_value = product.metafields.specification.max_speed.value | default: product.metafields.custom.top_speed.value
+            when 'max_range'
+              assign spec_value = product.metafields.specification.max_range.value | default: product.metafields.custom.range.value
+            when 'power'
+              assign spec_value = product.metafields.custom.max_power.value | default: product.metafields.custom.rated_power.value | default: product.metafields.specification.power.value | default: product.metafields.custom.motor_power.value
+            when 'weight'
+              assign spec_value = product.metafields.custom.scooter_weight.value
+            when 'max_load'
+              assign spec_value = product.metafields.custom.max_payload.value | default: product.metafields.specification.max_load.value
+            when 'water_rate'
+              assign spec_value = product.metafields.custom.water_resistance.value
+            when 'bells'
+              assign spec_value = product.metafields.custom.bells.value
+            when 'shocks'
+              assign spec_value = product.metafields.custom.shocks.value
+            when 'app_connectivity'
+              assign spec_value = product.metafields.custom.app_connectivity.value
+            when 'max_weight'
+              assign spec_value = product.metafields.custom.scooter_weight.value
+          endcase
+        endif
+      -%}
+      {%- if spec_value != blank -%}
+        <div class="product-spec-item">
+          <div class="spec-icon">
+            {%- case spec_key -%}
+              {%- when 'max_speed' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              {%- when 'max_range' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 8v8"/></svg>
+              {%- when 'power' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="16" height="10" rx="2" ry="2"/><path d="M22 11v2"/><path d="M5 10l3 4 3-4"/></svg>
+              {%- when 'weight' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 20h10"/><circle cx="12" cy="7" r="4"/><path d="M12 11v9"/></svg>
+              {%- when 'max_load' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/><path d="M11 19l1 1 1-1"/></svg>
+              {%- when 'tire_info' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>
+              {%- when 'climb_ability' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18l-9-9-9 9z"/></svg>
+              {%- when 'braking' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12h6"/></svg>
+              {%- when 'lighting' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              {%- when 'water_rate' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+              {%- when 'bells' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              {%- when 'shocks' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="12" y1="18" x2="12" y2="22"/><rect x="9" y="6" width="6" height="4" rx="1"/><rect x="9" y="14" width="6" height="4" rx="1"/></svg>
+              {%- when 'app_connectivity' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/><path d="M8.5 8.5c.94-.94 2.2-1.5 3.5-1.5s2.56.56 3.5 1.5"/><path d="M6 6a8.5 8.5 0 0 1 12 0"/></svg>
+              {%- when 'max_weight' -%}
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            {%- endcase -%}
+          </div>
+          <div class="spec-details">
+            {%- comment -%} Use human-readable labels {%- endcomment -%}
+            {%- case spec_key -%}
+              {%- when 'max_speed' -%}{%- assign spec_label = 'Max speed' -%}
+              {%- when 'max_range' -%}{%- assign spec_label = 'Max range' -%}
+              {%- when 'power' -%}{%- assign spec_label = 'Motor power' -%}
+              {%- when 'weight' -%}{%- assign spec_label = 'Weight' -%}
+              {%- when 'max_load' -%}{%- assign spec_label = 'Max load' -%}
+              {%- when 'tire_info' -%}{%- assign spec_label = 'Tire size & type' -%}
+              {%- when 'climb_ability' -%}{%- assign spec_label = 'Climbing ability' -%}
+              {%- when 'braking' -%}{%- assign spec_label = 'Braking system' -%}
+              {%- when 'lighting' -%}{%- assign spec_label = 'Lighting' -%}
+              {%- when 'water_rate' -%}{%- assign spec_label = 'Water resistance' -%}
+              {%- when 'bells' -%}{%- assign spec_label = 'Bells' -%}
+              {%- when 'shocks' -%}{%- assign spec_label = 'Shock absorbers' -%}
+              {%- when 'app_connectivity' -%}{%- assign spec_label = 'App connectivity' -%}
+              {%- when 'max_weight' -%}{%- assign spec_label = 'Scooter weight' -%}
+              {%- else -%}{%- assign spec_label = spec_key | replace: '_', ' ' | capitalize -%}
+            {%- endcase -%}
+            <span class="spec-label">{{ spec_label }}</span>
+            <span class="spec-value">{{ spec_value }}</span>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+<style>
+  .product-spec-grid-container {
+    margin: 40px 0;
+    padding: 30px;
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 12px;
+  }
+  .product-spec-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #000;
+  }
+  .product-spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+  }
+  .product-spec-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .spec-icon {
+    width: 48px;
+    height: 48px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d72308;
+    flex-shrink: 0;
+  }
+  .spec-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+  .spec-details {
+    display: flex;
+    flex-direction: column;
+  }
+  .spec-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .spec-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  @media screen and (max-width: 768px) {
+    .product-spec-grid-container {
+      padding: 20px;
+      margin: 30px 0;
+    }
+    .product-spec-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .spec-icon {
+      width: 40px;
+      height: 40px;
+    }
+    .spec-value {
+      font-size: 14px;
+    }
+  }
+</style>

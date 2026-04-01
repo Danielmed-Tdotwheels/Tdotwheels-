@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "segway_globo_options": {
+      "type": "segway-globo-options",
+      "settings": {
+        "widget_title": "Customize Your Service",
+        "widget_subtitle": "Select the options that apply to your Segway Ninebot scooter"
+      }
+    }
+  },
+  "order": [
+    "segway_globo_options"
+  ]
+}

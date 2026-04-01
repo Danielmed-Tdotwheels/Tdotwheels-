@@ -1,0 +1,78 @@
+{% comment %} Custom Announcement Bar Rebuild {% endcomment %}
+<style>
+  .custom-announcement-bar {
+    background-color: #d72308;
+    color: #ffffff;
+    text-align: center;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: 'Work Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    box-sizing: border-box;
+  }
+  .custom-announcement-bar .content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .custom-announcement-bar a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .announcement-icon {
+    width: 8px;
+    height: 8px;
+    fill: currentColor;
+    margin-left: 5px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .custom-announcement-bar {
+      height: 32px;
+      padding: 0 15px;
+      justify-content: center;
+      font-size: 11px;
+    }
+  }
+</style>
+
+<div class="custom-announcement-bar">
+  <div class="content-wrapper">
+    <span>Enjoy free shipping and a free pouch.</span>
+    <a href="{{ routes.all_products_collection_url }}">
+      Shop Now
+      <svg class="announcement-icon" viewBox="0 0 32 32">
+        <path d="M12 8l8 8-8 8 2 2 10-10-10-10z"/>
+      </svg>
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Welcome to our store"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

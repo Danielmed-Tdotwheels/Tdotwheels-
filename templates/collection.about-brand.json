@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-about-brand",
+      "settings": {
+      }
+    },
+    "lifestyle": {
+      "type": "brand-lifestyle-feature",
+      "settings": {
+      }
+    },
+    "story": {
+      "type": "brand-video-story",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "main",
+    "story",
+    "lifestyle"
+  ]
+}

@@ -1,0 +1,302 @@
+{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- if page.handle == 'brands' -%}
+  <style>
+    /* Brand Hero Styles */
+    .brand-hero-section-auto {
+      position: relative;
+      width: 100%;
+      height: 383px;
+      overflow: hidden;
+    }
+    .brand-hero-background-auto {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+    .brand-hero-overlay-auto {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, {{ section.settings.brand_page_overlay_opacity | divided_by: 100.0 }});
+      z-index: 2;
+    }
+    .brand-hero-content-auto {
+      position: relative;
+      z-index: 3;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 60px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .brand-hero-breadcrumb-auto {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 16px;
+      color: #ffffff;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+    .brand-hero-heading-auto {
+      font-family: 'Lato', sans-serif;
+      font-size: 64px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 20px 0;
+    }
+    .brand-hero-description-auto {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      color: #ffffff;
+      max-width: 600px;
+      opacity: 0.95;
+    }
+
+    /* Brands Grid Styles */
+    .brands-grid-automatic {
+      padding: 60px 0;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .brands-grid-container-auto {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+    }
+    @media (max-width: 1024px) {
+      .brands-grid-container-auto {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .brand-hero-heading-auto {
+        font-size: 48px;
+      }
+    }
+    @media (max-width: 768px) {
+      .brands-grid-container-auto {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+      .brand-hero-section-auto {
+        height: 300px;
+      }
+      .brand-hero-content-auto {
+        padding: 0 20px;
+      }
+      .brand-hero-heading-auto {
+        font-size: 36px;
+      }
+      .brand-hero-breadcrumb-auto {
+        font-size: 14px;
+      }
+    }
+    .brand-grid-item-auto {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      min-height: 180px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+    }
+    .brand-grid-item-auto:hover {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+      border-color: #d72308;
+    }
+    .brand-grid-placeholder-auto {
+      width: 100%;
+      height: 60px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      color: #999;
+      font-size: 11px;
+      border-radius: 4px;
+    }
+    .brand-grid-name-auto {
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      text-align: center;
+    }
+  </style>
+
+  <div class="brand-hero-wrapper">
+    <section class="brand-hero-section-auto">
+      {% if section.settings.brand_page_hero_image %}
+        <img
+          src="{{ section.settings.brand_page_hero_image | image_url: width: 1920 }}"
+          alt="Brands Hero"
+          class="brand-hero-background-auto"
+          width="1920"
+          height="383"
+          loading="eager"
+        >
+      {% else %}
+        <img
+          src="{{ 'brand-bg.jpg' | asset_url }}"
+          alt="Brands Hero"
+          class="brand-hero-background-auto"
+          width="1920"
+          height="383"
+          loading="eager"
+        >
+      {% endif %}
+      <div class="brand-hero-overlay-auto"></div>
+      <div class="brand-hero-content-auto">
+        <div class="brand-hero-breadcrumb-auto">
+          <span>Shop by Brands</span>
+          <span style="margin: 0 8px;">></span>
+          <span>{{ page.title }}</span>
+        </div>
+        <h1 class="brand-hero-heading-auto">Explore Our Brands</h1>
+        <p class="brand-hero-description-auto">
+          Discover the world's leading electric mobility brands, curated for performance, reliability, and style.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <div class="brands-grid-automatic page-width">
+    <div class="brands-grid-container-auto">
+      {%- assign auto_brands = 'Blutron,Circooter,Inmotion,iScooter,Isinwheel,Kaabo,Segway Ninebot,T-Dot Wheels'
+        | split: ','
+      -%}
+      {%- for brand in auto_brands -%}
+        {%- liquid
+          assign brand_handle = brand | handleize
+          assign brand_logo_url = ''
+          case brand_handle
+            when 'inmotion'
+              assign brand_logo_url = 'in.png' | asset_url
+            when 'circooter'
+              assign brand_logo_url = 'cir.png' | asset_url
+            when 'blutron'
+              assign brand_logo_url = 'blu.png' | asset_url
+            when 'iscooter'
+              assign brand_logo_url = 'is.png' | asset_url
+            when 'isinwheel'
+              assign brand_logo_url = 'isin.png' | asset_url
+            when 'kaabo'
+              assign brand_logo_url = 'kab.png' | asset_url
+            when 'segway-ninebot'
+              assign brand_logo_url = 'seg.png' | asset_url
+            when 't-dot-wheels'
+              assign brand_logo_url = 'tdot.png' | asset_url
+          endcase
+        -%}
+        <a href="/collections/{{ brand_handle }}?view=about-brand" class="brand-grid-item-auto">
+          <div class="brand-grid-content-auto">
+            {%- if brand_logo_url != blank -%}
+              <img
+                src="{{ brand_logo_url }}"
+                alt="{{ brand }}"
+                class="brand-grid-image-auto"
+                width="300"
+                height="80"
+                loading="lazy"
+                style="max-width: 100%; max-height: 60px; object-fit: contain; margin-bottom: 15px;"
+              >
+            {%- else -%}
+              <div class="brand-grid-placeholder-auto">
+                <span>Logo Placeholder</span>
+              </div>
+            {%- endif -%}
+          </div>
+          <div class="brand-grid-name-auto">{{ brand }}</div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- elsif page.handle == 'customer-support' or page.handle == 'compare' or page.handle == 'compare-1' -%}
+  {%- comment -%} Content hidden for special layouts {%- endcomment -%}
+{%- else -%}
+  <div class="page-width page-width--narrow section-{{ section.id }}-padding">
+    <h1 class="main-page-title page-title h0{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {{ page.title | escape }}
+    </h1>
+    <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      {{ page.content }}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Brand Page Settings",
+      "info": "Settings for the /pages/brands page"
+    },
+    {
+      "type": "image_picker",
+      "id": "brand_page_hero_image",
+      "label": "Brand Page Hero Image"
+    },
+    {
+      "type": "range",
+      "id": "brand_page_overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 10,
+      "default": 70,
+      "unit": "%",
+      "label": "Hero Overlay Opacity"
+    }
+  ]
+}
+{% endschema %}
