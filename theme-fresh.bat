@@ -12,7 +12,7 @@ set NODE_OPTIONS=--dns-result-order=ipv4first
 
 echo 3. Starting fresh dev sync...
 echo (If prompted, choose to create a NEW development theme)
-echo (Ignoring assets/brand-bg.jpg for initial stable sync)
-shopify theme dev --reset --ignore assets/brand-bg.jpg
+echo (Aggressively ignoring ALL assets for a stable baseline sync)
+shopify theme dev --ignore assets/*
 
 pause

@@ -1,7 +1,7 @@
-# Ignore large assets that cause synchronization timeouts
-assets/brand-bg.jpg
+# EXTREME ISOLATION: Ignore all assets to bypass network ECONNRESET
+assets/*
 
-# Ignore temporary files
+# Standard ignores
 .tmp/
 *.log
 .DS_Store
