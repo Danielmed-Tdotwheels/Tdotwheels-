@@ -1,0 +1,9 @@
+# Ignore large assets that cause synchronization timeouts
+assets/brand-bg.jpg
+
+# Ignore temporary files
+.tmp/
+*.log
+.DS_Store
+.shopify
+node_modules/
